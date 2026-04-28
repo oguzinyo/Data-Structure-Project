@@ -1,0 +1,189 @@
+# Proje 4 - Hash Table Implementasyonu
+## AI Prompt Kayıtları
+
+**Proje:** Blokzincir İşlem Ağlarının Analizi  
+**Tarih:** 28 Nisan 2026  
+**Amaç:** Hash Table veri yapısının sıfırdan implementasyonu
+
+---
+
+## Prompt 1: Proje Başlangıcı ve Görev Tanımı
+
+```
+Blokzincir işlem ağlarının analizi için bir Hash Table implementasyonu 
+kullanmam gerekiyor. Proje gereksinimlerine göre hazır kütüphane 
+kullanmadan O(1) erişim süresi hedeflemem gerekiyor. Ayrıca collision 
+yönetimi ve manuel hash fonksiyonu tasarlanmış olması gerekiyor. 
+C# ile bu yapıyı nasıl implement edebilirim?
+```
+
+---
+
+## Prompt 2: Mevcut Kod Yapısının İncelenmesi
+
+```
+Mevcut HashTable.cs ve Program.cs dosyalarının yapısını ve içerdiği 
+sınıfları açıklar mısın? Ayrıca bu implementasyonun proje gereksinimlerini 
+karşılayıp karşılamadığını değerlendir.
+```
+
+---
+
+## Prompt 3: Test ve Doğrulama Süreci
+
+```
+Hash Table implementasyonunun doğru çalıştığını nasıl test edebilirim? 
+Terminal üzerinden kodu çalıştırma ve debug etme yöntemleri nelerdir?
+```
+
+---
+
+## Prompt 4: Performans Analizi
+
+```
+O(1) erişim süresinin sağlandığını nasıl kanıtlayabilirim? 
+Collision sayısı, load factor ve zincir uzunluğu gibi metrikleri 
+nasıl takip edebilirim?
+```
+
+---
+
+## Prompt 5: Hash Fonksiyonu Tasarımı
+
+```
+Cüzdan adresleri için optimal hash fonksiyonu nasıl tasarlanır? 
+FNV-1a ve DJB2 gibi fonksiyonların avantaj ve dezavantajları nelerdir?
+```
+
+---
+
+## Prompt 6: Collision Yönetimi Stratejileri
+
+```
+Separate chaining dışında hangi collision yönetimi yöntemleri kullanılabilir? 
+Linear probing ve double hashing arasındaki fark nedir? Hangi durumda hangisi 
+tercih edilmelidir?
+```
+
+---
+
+## Prompt 7: Bellek Yönetimi ve Dinamik Genişleme
+
+```
+Hash table'ın dinamik olarak büyümesi (resizing) bellek kullanımını 
+nasıl etkiler? Load factor threshold'u nasıl belirlenir ve ne zaman 
+resize yapılmalıdır?
+```
+
+---
+
+## Prompt 8: Proje Dokümantasyonu
+
+```
+Hash Table implementasyonu için profesyonel seviyede bir README dosyası 
+hazırla. Teknik detayları, kullanım örneklerini ve performans metriklerini 
+içermeli. Ayrıca takım çalışması için görev dağılımı tablosu ekle.
+```
+
+---
+
+## Prompt 9: GitHub Entegrasyonu ve Versiyon Kontrolü
+
+```
+5 kişilik bir takım olarak GitHub'da nasıl organize olmalıyız? 
+Branch strategy, commit naming convention ve PR süreçleri için 
+önerilerin var mı? Ayrıca hangi dosyaların GitHub'a yüklenmesi 
+gerektiğini açıklar mısın?
+```
+
+---
+
+## Prompt 11: Hata Ayıklama ve Optimizasyon
+
+```
+Hash table implementasyonunda oluşabilecek edge case'leri (bos anahtar, 
+null değer, integer overflow) nasıl handle edebilirim? Debug modunda 
+adım adım nasıl ilerleyebilirim?
+```
+
+---
+
+## Prompt 12: Entegrasyon Planlaması
+
+```
+Hash Table'ı diğer veri yapılarıyla (Graph, Merkle Tree, Queue, Stack) 
+entegre ederken nelere dikkat etmem gerekiyor? Özellikle BFS ve DFS 
+algoritmaları için queue ve stack kullanımı nasıl olmalı?
+```
+
+---
+
+## Proje Teknik Özeti
+
+### Implementasyon Detayları
+
+| Özellik | Değer |
+|---------|-------|
+| Veri Yapısı | Separate Chaining Hash Table |
+| Programlama Dili | C# (.NET 10.0) |
+| Erişim Karmaşıklığı | O(1) ortalama |
+| Collision Yönetimi | Zincirleme (Chaining) |
+| Dinamik Genişleme | Evet (Load Factor: 0.75) |
+
+### Hash Fonksiyonları
+
+| Fonksiyon | Açıklama | Karmaşıklık |
+|-----------|----------|-------------|
+| HashDJB2 | Bitcoin tarzı yaygın kullanım | O(n) |
+| HashFNV1a | İyi dağılım, düşük collision | O(n) |
+| HashMD5Based | Sabit boyutlu output | O(n) |
+| HashSimple | Basit çarpma yöntemi | O(n) |
+
+### Test Senaryoları
+
+1. Temel kullanım testleri (Add, Get, Remove)
+2. Hash fonksiyonu karşılaştırması
+3. Collision oluşturma senaryoları
+4. Blokzincir işlem ağı simülasyonu
+5. Büyük ölçek performans testleri (10.000+ işlem)
+
+---
+
+*Bu doküman, proje geliştirme sürecinde AI asistanına yönlendirilen 
+tüm promptları içermektedir. Oluşturulma amacı: Akademik şeffaflık 
+ve süreç takibi.*
+
+**Son Güncelleme:** 28 Nisan 2026
+Readme'yi düzenler misin?
+```
+
+---
+
+## Proje Özeti
+
+| Bilgi | Değer |
+|-------|-------|
+| Proje | Blokzincir İşlem Ağlarının Analizi |
+| Görev | Hash Table Implementasyonu |
+| Zorluk | 8/10 |
+| Dil | C# |
+| Kısıtlama | Hazır kütüphane kullanılmadı |
+| Hedef | O(1) erişim süresi |
+
+## Kullanılan Yapılar
+
+- Separate Chaining (Collision Yönetimi)
+- Dinamik Genişleme (Load Factor Threshold: 0.75)
+- Performans İstatistikleri Takibi
+
+## Hash Fonksiyonları
+
+1. HashDJB2 - Bitcoin adresleri için yaygın
+2. HashFNV1a - İyi dağılım sağlar
+3. HashMD5Based - Sabit uzunlukta çıktı
+4. HashSimple - Basit çarpma yöntemi
+
+---
+
+*Bu prompt kaydı, proje geliştirme sürecinde AI asistanına verilen tüm komutları içermektedir.*
+*Oluşturulma Tarihi: 28 Nisan 2026*

@@ -4,7 +4,7 @@
 
 Bu proje, blokzincir sistemlerindeki işlem verilerini analiz etmek için tasarlanmış bir veri yapıları implementasyonudur. **Faz 1: Zorunlu Veri Yapıları** kapsamında Karma Tablo (Hash Table) implementasyonu içerir.
 
-> ⚠️ **Not:** Bu implementasyon hazır kütüphane KULLANMAZ. Tüm yapılar sıfırdan yazılmıştır.
+> ⚠️ **Not:** Bu implementasyonda System.Collections.Generic harici hazır kütüphane KULLANILMAMIŞTIR. Tüm yapılar temel C# bilgisiyle sıfırdan implement edilmiştir.
 
 ---
 
@@ -12,10 +12,10 @@ Bu proje, blokzincir sistemlerindeki işlem verilerini analiz etmek için tasarl
 
 ```
 Veri Yapıları Proje/
-├── HashTable.cs      # Ana implementasyon (Veri yapısı)
-├── Program.cs        # Demo ve testler (Kullanım örnekleri)
-├── Veri Yapıları Proje.csproj
-└── proje4.pdf        # Proje detayları (Takım arkadaşından)
+├── HashTable.cs      # Hash Table implementasyonu
+├── Program.cs        # Demo ve testler
+├── prompts.txt       # AI prompt kayıtları
+└── README.md         # Proje dokümantasyonu
 ```
 
 ---
@@ -261,20 +261,6 @@ Aşılırsa:
 
 ---
 
-## 👥 Takım Çalışması
-
-Bu proje 5 kişilik takım tarafından yapılmaktadır:
-
-| Görev | Kişi |
-|-------|------|
-| Karma Tablo (Hash Table) | Oğuz (sen) |
-| Yönlü Graf (Directed Graph) | Takım arkadaşı 1 |
-| Merkle Ağacı (Hash Tree) | Takım arkadaşı 2 |
-| Kuyruk ve Yığıt (Queue/Stack) | Takım arkadaşı 3 |
-| Arayüz (Interface) | Takım arkadaşı 4 |
-
----
-
 ## ✅ Ödev Gereksinimleri Karşılama
 
 - [x] Hazır kütüphane kullanmamak
@@ -284,10 +270,3 @@ Bu proje 5 kişilik takım tarafından yapılmaktadır:
 - [x] Performans metrikleri sunmak
 
 ---
-
-## 📝 Geliştirme Önerileri
-
-1. **Linear Probing** ekleyebilirsin (açık adresleme alternatifi)
-2. **Double Hashing** implementasyonu deneyebilirsin
-3. **Merkle Tree** ile entegrasyon için işlem hash'leme ekleyebilirsin
-4. **Benchmark** modülü ile daha detaylı performans analizi yapabilirsin
