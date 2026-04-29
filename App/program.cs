@@ -1,6 +1,8 @@
 using System;
 using BlockchainAnalysis.DataStructures;
 
+// Developed by: Ummet Erkan
+
 namespace BlockchainAnalysis.App {
     class Program {
         static void Main() {
