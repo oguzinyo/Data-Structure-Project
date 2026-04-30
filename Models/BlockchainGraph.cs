@@ -1,73 +1,67 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+using System;
 
-/* Sınıfın amacı: Düğümleri (WalletNode) ve kenarları (TransactionEdge) bir araya getiren
- * anlamlı bir graf modelisini oluşturur. Tüm hesapları ve hesaplar arası fon akışını tek bir
- * çatı altında toplar.
+/*
+ Kripto işlem ağı yönlü bir graf olarak modellenmelidir. Bu sınıf yönlü grafın
+ kenar yapısını (edge) temsil etmektedir.
+ Cüzdan adresleri arası para transferleri, miktar ve zaman bilgisi taşıyan yönlü kenarlar
+ olarak modelleneceklerdir. İşlemlerin bir göndericisi ve bir alıcısı
+ olduğundan ötürü grafın kenarları da yönlü olacaktır.
  */
 
 namespace BlockchainAnalysis.Models
 {
-    public class BlockchainGraph
+    public class TransactionEdge
     {
-        // Tüm cüzdanları O(1) sürede bulabilmek ve aynı graf üzerine
-        // veri yazılmaya çalışılırken veri çakışmalarını önlemek için
-        // Thread-Safe Hash Table (Sözlük) kullanıyoruz.
-        public ConcurrentDictionary<string, WalletNode> Wallets { get; private set; }
+        // Eski modele uyumluluk için eklenen özellikler
+        public string TransactionId { get; private set; }
+        public decimal Fee { get; private set; }
 
-        // Komşuluk Listesi (Adjacency List) - Thread-Safe
-        // Her bir cüzdan adresine karşılık, o cüzdanın yaptığı transferlerin bir listesini tutar.
-        // Adjacency matrix yerine adjacency list kullanırız çünkü blokzincir ağları seyrek graf (sparse graf)
-        // yapısına sahiplerdir. milyonlarca cüzdan olsa dahi bi cüzdan sadece birkaç kişiyle işlem yapar.
-        // böylece bellek tasarrufu yapmış oluruz.
-        public ConcurrentDictionary<string, ConcurrentBag<TransactionEdge>> AdjacencyList { get; private set; }
+        // Dışarıdan string adres isteyen sınıflar (MerkleTree vb.) için uyumluluk köprüleri
+        public string FromAddress => From?.Address ?? string.Empty;
+        public string ToAddress => To?.Address ?? string.Empty;
 
-        public BlockchainGraph() //constructor
-        {
-            Wallets = new ConcurrentDictionary<string, WalletNode>();
-            AdjacencyList = new ConcurrentDictionary<string, ConcurrentBag<TransactionEdge>>();
+        public WalletNode From { get; private set; }
+        //paranın çıktığı kaynak cüzdan, private olmasıyla birlikte sadece okunabilir olması sağlanır
+        
+        public WalletNode To { get; private set; }
+        //hedefteki cüzdandır.
+        
+        public decimal Amount { get; private set; }
+        //graflarda kenarların üzerinde bir weight değeri bulunabilir. 
+        //bizim modelimizde bu weight transfer edilen para miktarıdır.
+        
+        public DateTime Timestamp { get; private set; }
+        //işlemin gerçekleştiği zaman bilgisi. blokzincirlerde kronoloji kritiktir.
+
+        public TransactionEdge(WalletNode fromNode, WalletNode toNode, decimal amount, decimal fee = 0m)
+        {//constructor. bi kenarın oluşabilmesi için yönünün ve ağırlığının verilmesini zorunlu kılar.
+            if (fromNode == null || toNode == null)
+            {//dangling edge yani hiçbi düğüme bağlı olmayan bi kenar olmasını enggeler
+                throw new ArgumentNullException("Gönderen (From) ve alıcı (To) düğümler boş olamaz.");
+            }
+
+            if (amount <= 0)
+            {//weight pozitif olmalı
+                throw new ArgumentException("Transfer miktarı sıfırdan büyük olmalıdır.", nameof(amount));
+            }
+
+            if (fee < 0)
+            {
+                throw new ArgumentException("Madenci ücreti (Fee) negatif olamaz.", nameof(fee));
+            }
+
+            TransactionId = Guid.NewGuid().ToString(); // Benzersiz ID oluşturulur
+            From = fromNode;
+            To = toNode;
+            Amount = amount;
+            Fee = fee;
+            Timestamp = DateTime.UtcNow; // İşlemin oluşturulduğu anı otomatik kaydeder.
         }
 
-        // Graf yapısına yeni bir düğüm (cüzdan) ekler
-        public void AddWallet(string address)
+        public override string ToString()
         {
-            if (string.IsNullOrWhiteSpace(address)) return; //gelen adres boş mu değil mi
-
-            if (!Wallets.ContainsKey(address)) //cüzdan halihazırda sistemde var mı
-            {
-                var newNode = new WalletNode(address);
-                Wallets.TryAdd(address, newNode);
-                AdjacencyList.TryAdd(address, new ConcurrentBag<TransactionEdge>());
-            }
-        }
-
-        // Graf yapısına yönlü bir kenar (transfer işlemi) ekler
-        public void AddTransaction(string fromAddress, string toAddress, decimal amount, decimal fee = 0m)
-        {
-            // Gönderen veya alıcı sistemde yoksa, otomatik olarak oluştur ve ağa dahil et
-            if (!Wallets.ContainsKey(fromAddress)) AddWallet(fromAddress);
-            if (!Wallets.ContainsKey(toAddress)) AddWallet(toAddress);
-
-            var fromNode = Wallets[fromAddress];
-            var toNode = Wallets[toAddress];
-
-            // Yeni yönlü kenarı (işlemi) oluştur (Uyumluluk için Fee dahil edildi)
-            var transaction = new TransactionEdge(fromNode, toNode, amount, fee);
-
-            // İşlemi gönderenin komşuluk listesine ekle (Yönlü graf olduğu için sadece gönderene eklenir)
-            AdjacencyList[fromAddress].Add(transaction);
-
-            // Bakiye (Balance) Güncellemesi - Thread-Safe Modeli
-            lock (fromNode.BalanceLock)
-            {
-                fromNode.Balance -= (amount + fee); // Gönderenden transfer miktarı + madenci ücreti kesilir
-            }
-            
-            lock (toNode.BalanceLock)
-            {
-                toNode.Balance += amount;
-            }
+            return $"Transaction [{TransactionId}]: [{FromAddress} -> {ToAddress}] Amount: {Amount}, Fee: {Fee}, Time: {Timestamp.ToString("HH:mm:ss")}";
+            //dolaşım algoritmaları çalıştırılırken konsol ekranında fon akışını takip etmeyi kolaylaştırır.
         }
     }
 }
