@@ -14,7 +14,7 @@ namespace BlockchainAnalysis.Models
     {
         public string Address { get; private set; } //cüzdanın benzersiz kimliğidir.
         //okuma kısmı herkese açıktır fakat yazma sadece constructor içinde belirlenecektir, dışardan değiştirilemez (immutable)
-        public double Balance { get; set; } //cüzdanın anlık bakiyesini tutacak
+        public decimal Balance { get; set; } //cüzdanın anlık bakiyesini tutacak
         //graf üzerinde transfer işlemleri gerçekleştikçe bakiye dinamik değişeceğinden get ve set public bırakıldı. 
         public readonly object BalanceLock = new object();
         // Bakiye güncellemelerini senkronize etmek için kullanılacak kilit nesnesi
