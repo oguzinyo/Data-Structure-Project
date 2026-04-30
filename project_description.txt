@@ -1,0 +1,103 @@
+PROJE DEĞERLENDİRME STANDARTLARI
+(Tüm projeler değerlendirme kriterlerini sağlamalıdır.)
+B.1. Takım Çalışması ve Teknolojik Altyapı [40 Puan]
+Ekip olarak, bu projede aşağıdaki standartlara uymak zorunludur, uymayan ekip üyeleri bu bölümden puan alamazlar.
+• Eşzamanlılık ve Mikroservis Yaklaşımı: Ekip sayısının büyüklüğü göz önüne alınarak, yapay zeka simülasyon
+motorunun, veri yapılarının tutulduğu ana bellekten bağımsız/asenkron çalışacak bir yapıda (Thread-safe veya ayrı
+servisler halinde) tasarlanması beklenmektedir.
+• Versiyon Kontrolü (Git): Geliştirme süreci GitHub/GitLab üzerinden yürütülecek, master/main dalına doğrudan kod
+atılmayacak, branch ve Pull Request (PR) mekanizmaları kullanılacaktır.
+Takım üyelerinin commit geçmişi notlandırmada kritik rol oynar.
+B.2. Teslim Edilecekler [40 Puan]
+• Ekip olarak, bu projede aşağıdaki standartların hepsine uymak zorunludur, uyulmadığı takdirde bu bölümden ekipçe
+puan alınamaz.
+• Kaynak Kod Deposu (Repository): README.md dosyasında projenin mimarisinin ve nasıl ayağa kaldırılacağının
+detaylıca anlatıldığı sayfa.
+• Docker Konfigürasyonları: Tüm sistemin (Frontend, Backend, AI Servisi) bağımlılık sorunu yaşamadan tek bir dockercompose up komutuyla çalışmasını sağlayan Dockerfile ve dockercompose.yml dosyaları.
+• Proje Raporu ve Analiz: Projenin UML diyagramlarını, veri yapılarının zaman karmaşıklığı (Big-O) analizlerini ve AI
+API'sine gönderilen prompt'ların dökümünü içeren kapsamlı rapor.
+• Demo Videosu Linki: Tüm sistemin çalıştığını gösteren, en fazla 10 dakikalık video. (Arayüz demosu, dinamik veri
+değişiminin gösterimi ve yazılan core veri yapılarının kod üzerinden hızlıca anlatımı).
+B.3. Teslim Kuralları ve Değerlendirme (Code Defense) [20 Puan]
+İsimlendirme Şartı: Takım üyelerinin ad ve soyadları, veritabanı veya fonksiyonlar içine Türkçe karakter içermeyen
+formatta yerleştirilmiş olmalıdır.
+KOD SAVUNMASI (Jüri Sunumu): Teslim edilen projeler arasından gruplar canlı code defense'e alınacaktır. Gruptaki
+herhangi bir öğrencinin, kendi yazmadığı bir modül dahi olsa projede kullanılan temel veri yapılarının çalışma
+mantığını ve zaman karmaşıklığını açıklayabilmesi zorunludur. Başarı, sadece kodun çalışmasına değil, ekibin konuya
+hakimiyetine bağlıdır. Bu sunuma katılmayan öğrenciler proje değerlendirme notu alamazlar. Proje teslim edildiğinde
+tam fonksiyonel şekilde çalışıyor olmalıdır.
+Son Teslim: İlan edilecek tarihte sistem üzerinden yapılacaktır. Gecikmeler kabul edilmez (12. veya 13. Hafta olması
+planlanıyor.)
+
+
+PROJE KONU4:
+Proje Adı: Blokzincir İşlem Ağlarının Analizi
+Senaryo ve Temel Amaç:
+Bu projede, blokzincir sistemlerinde bulunan işlem verileri sadeleştirilmiş bir model üzerinden incelenecektir.
+Cüzdan adresleri düğüm (vertex), bu adresler arasındaki para transferleri ise miktar ve zaman bilgisi taşıyan yönlü
+kenarlar (edge) olarak modellenir.
+Temel amaç:
+işlem ağını graf yapısı ile temsil etmek
+belirli bir cüzdanın işlem geçmişini analiz etmek
+fon akışını (para hareketlerini) takip etmek
+A.1. Zorunlu Veri Yapıları (Faz 1)
+Yönlü Graf (Directed Graph):
+Kripto işlem ağı, yönlü bir graf olarak modellenir.
+Düğümler: cüzdan adresleri
+Kenarlar: transfer işlemleri
+Kenar özellikleri: transfer miktarı, zaman bilgisi
+Not: Sistem basitleştirilmiş bir modeldir, grafin döngü içermesi mümkündür.
+Merkle Ağacı (Hash Tree):
+İşlem verilerinin bütünlüğünü doğrulamak amacıyla kullanılacaktır.
+İşlemler hash'lenerek ikili ağaç yapısında birleştirilecektir
+Sonuçta bir "Merkle Root" elde edilecektir
+• Bu yapı, verinin değiştirilip değiştirilmediğini kontrol etmek için kullanılacaktır.
+Karma Tablo (Hash Table):
+Cüzdan adresleri ve işlem ID'leri tutulacaktır
+Amaç: hızlı erişim, Erişim süresi: ortalama O(1)
+Kuyruk (Queue) ve Yığıt (Stack): Graf üzerinde dolaşım algoritmaları için kullanılacaktır:
+BFS → fon akışını katmanlı takip etmek
+DFS → derinlemesine analiz yapmak
+
+
+A.2. Algoritmalar ve Yardımcı AI Kullanımı (Faz 2)
+Zorunlu Algoritmalar:
+.
+BFS ve DFS implementasyonu
+Belirli bir cüzdandan başlayan fon akışının izlenmesi
+Belirli hedef düğümlere (örn. borsa adresleri) ulaşımın analiz edilmesi
+Ek olarak (opsiyonel):
+.
+Maksimum kapasite yolu (graf üzerinde alternatif yol analizi)
+Algoritmaların zaman ve uzay karmaşıklıkları analiz edilecektir.
+Bakiye Hesaplama:
+Cüzdan bakiyesi, basitleştirilmiş bir model ile hesaplanacaktır:
+.
+Gelen transferlerin toplam
+Giden transferlerin toplamı
+Bu model, gerçek blokzincir sistemlerinin sadeleştirilmiş bir versiyonudur.
+Sentetik Veri Üretimi (Opsiyonel):
+Test verileri:
+programatik olarak üretilecektir-isteğe bağlı olarak GenAI araçları kullanılabilir
+Amaç:
+.
+.
+farklı senaryolarda algoritmaların test edilmesi
+fon akışı analizinin doğrulanması
+
+
+A.3. Spesifik Arayüz Gereksinimleri (Faz 3)
+Arayüz, blokzincir analiz araçlarından ilham alan sadeleştirilmiş bir görselleştirme sistemi olacaktır.
+Graf Görselleştirme:
+İşlem ağı,yönlü node-link diyagramı olarak gösterilecektir
+Düğüm boyutu → yaklaşık bakiyeyi temsil edebilir
+Kenar kalınlığı → transfer miktarını gösterebilir
+Merkle Ağacı Görselleştirme:
+Seçilen bir işlem için Merkle ağacı yapısı ayrı panelde gösterilecektir
+Etkileşim:
+Kullanıcı bir cüzdan ID girdiğinde:
+fon akışı analiz edilecek
+sonuç graf üzerinde vurgulanacaktır
+Performans Notu:
+Sistem küçük ve orta ölçekli veri setleri üzerinde test edilecektir.
+Görselleştirme karmaşıklığını azaltmak için filtreleme uygulanabilir.

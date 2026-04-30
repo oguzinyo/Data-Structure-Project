@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  blockchain-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: blockchain_analysis_app
+    restart: unless-stopped
