@@ -15,13 +15,13 @@ namespace BlockchainAnalysis.Models
         //paranın çıktığı kaynak cüzdan, private olmasıyla birlikte sadece okunabilir olması sağlanır
         public WalletNode To { get; private set; }
         //hedefteki cüzdandır.
-        public double Amount { get; private set; }
+        public decimal Amount { get; private set; }
         //graflarda kenarların üzerinde bir weight değeri bulunabilir. 
         //bizim modelimizde bu weight transfer edilen para miktarıdır.
         public DateTime Timestamp { get; private set; }
         //işlemin gerçekleştiği zaman bilgisi. blokzincirlerde kronoloji kritiktir.
 
-        public TransactionEdge(WalletNode fromNode, WalletNode toNode, double amount)
+        public TransactionEdge(WalletNode fromNode, WalletNode toNode, decimal amount)
         {//constructor. bi kenarın oluşabilmesi için yönünün ve ağırlığının verilmesini zorunlu kılar.
             if (fromNode == null || toNode == null)
             {//dangling edge yani hiçbi düğüme bağlı olmayan bi kenar olmasını enggeler
