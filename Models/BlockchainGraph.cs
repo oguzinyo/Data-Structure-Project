@@ -43,7 +43,7 @@ namespace BlockchainAnalysis.Models
         }
 
         // Graf yapısına yönlü bir kenar (transfer işlemi) ekler
-        public void AddTransaction(string fromAddress, string toAddress, double amount)
+        public void AddTransaction(string fromAddress, string toAddress, decimal amount)
         {
             // Gönderen veya alıcı sistemde yoksa, otomatik olarak oluştur ve ağa dahil et
             if (!Wallets.ContainsKey(fromAddress)) AddWallet(fromAddress);
