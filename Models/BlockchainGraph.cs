@@ -58,9 +58,16 @@ namespace BlockchainAnalysis.Models
             // İşlemi gönderenin komşuluk listesine ekle (Yönlü graf olduğu için sadece gönderene eklenir)
             AdjacencyList[fromAddress].Add(transaction);
 
-            // Bakiye (Balance) Güncellemesi - Sadeleştirilmiş model
-            fromNode.Balance -= amount; //gönderenden azaltır
-            toNode.Balance += amount; //alıcının arttırır
+            // Bakiye (Balance) Güncellemesi - Thread-Safe Modeli
+            lock (fromNode.BalanceLock)
+            {
+                fromNode.Balance -= amount;
+            }
+            
+            lock (toNode.BalanceLock)
+            {
+                toNode.Balance += amount;
+            }
         }
     }
 }
