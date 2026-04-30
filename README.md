@@ -1,25 +1,24 @@
-# Blokzincir İşlem Ağlarının Analizi
-
-Bu proje, blokzincir sistemlerindeki işlem verilerini sadeleştirilmiş bir model üzerinden incelemeyi amaçlayan bir "Veri Yapıları" dönem projesidir. Sistemde cüzdanlar düğüm (vertex), para transferleri ise kenar (edge) olarak modellenmiştir.
-
-## 🏗️ Proje Mimarisi ve Çekirdek Veri Yapıları
-- **Yönlü Graf (Directed Graph):** Cüzdanlar arası para akışının modellenmesi.
-- **Merkle Ağacı (Hash Tree):** İşlem verilerinin değiştirilip değiştirilmediğini denetleyen kriptografik doğrulama.
-- **Karma Tablo (Hash Table):** Cüzdan ID'lerine O(1) karmaşıklığında anında erişim.
-- **Max-Heap (Mempool):** İşlemlerin sisteme girmeden önce işlem ücretine (fee) göre bekletildiği öncelikli havuz.
-
-## 🚀 Projeyi Ayağa Kaldırma (Docker)
-Proje, tüm ortam bağımlılıklarından izole edilecek şekilde konteynerize edilmiştir. Sisteminizde Docker yüklü ise tek bir komutla projeyi derleyip çalıştırabilirsiniz:
-
-```bash
-docker-compose up --build
+Bu proje, bir blokzincir ağındaki işlem verilerinin bütünlüğünü ve doğruluğunu kontrol etmek amacıyla C# ile geliştirilmiş
+bir Merkle Tree (Karma Ağacı) uygulamasıdır.
 
 
-```markdown
 
-## 👥 Takim Uyeleri
-- Oguzhan HEKİMOGLU
-- Ali Kadir OZYASAR
-- Batuhan OZDEMİR
-- Ummet ERKAN
-- Mehmet Oguzhan TANRIVERDİ 
+📌 Özellikler
+Veri Bütünlüğü: Yaprak düğümlerdeki (leaf nodes) herhangi bir değişikliğin kök hash (Root Hash) üzerindeki etkisi gözlemlenebilir.
+
+Hash Algoritması: Veriler, kriptografik olarak güvenli bir şekilde birleştirilerek ağaç yapısı oluşturulur.
+
+Hızlı Doğrulama: Büyük veri setleri içinde belirli bir işlemin varlığı, tüm veri setini kontrol etmeye gerek kalmadan doğrulanabilir.
+
+
+
+🛠 Teknik Detaylar
+Dil: C# [.NET]
+
+Mimari: İkili Ağaç (Binary Tree) yapısı üzerine kurgulanmıştır.
+
+Dosyalar:
+
+MerkleTreeFunc.cs: Ağacın oluşturulması ve hash hesaplama mantığını içeren temel sınıf.
+
+Demo.cs: Sistemin nasıl çalıştığını gösteren test ve senaryo dosyası.
