@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 Bu proje, bir blokzincir ağındaki işlem verilerinin bütünlüğünü ve doğruluğunu kontrol etmek amacıyla C# ile geliştirilmiş
 bir Merkle Tree (Karma Ağacı) uygulamasıdır.
 =======
@@ -101,4 +101,4 @@ Bu modül kapsamında, proje föyünde belirtilen aşağıdaki kriterler başar�
 -   **Big-O Analizi:** Tasarlanan veri yapılarının zaman ve uzay karmaşıklığı analizleri teknik dökümantasyona eklenmiştir.
 ---
 *Bu döküman, iş bölümünde Faz 1'in Yönlü Graf kısmından sorumlu olan Batuhan Özdemir'in sorumlulukları kapsamında hazırlanan kodların teknik dökümantasyonudur.*
->>>>>>> origin/main
+
