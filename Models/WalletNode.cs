@@ -1,4 +1,4 @@
-﻿using Systusing System;
+using System;
 
 /*
  * Sınıfın Amacı: Yönlü grafı oluşturan iki bileşen vardır.
