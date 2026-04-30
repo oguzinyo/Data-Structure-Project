@@ -15,10 +15,10 @@ namespace BlockchainAnalysis.Models
         // Eski modele uyumluluk için eklenen özellikler
         public string TransactionId { get; private set; }
         public decimal Fee { get; private set; }
-        
+
         // Dışarıdan string adres isteyen sınıflar (MerkleTree vb.) için uyumluluk köprüleri
-        public string FromAddress => From?.Address;
-        public string ToAddress => To?.Address;
+        public string FromAddress => From?.Address ?? string.Empty;
+        public string ToAddress => To?.Address ?? string.Empty;
 
         public WalletNode From { get; private set; }
         //paranın çıktığı kaynak cüzdan, private olmasıyla birlikte sadece okunabilir olması sağlanır
