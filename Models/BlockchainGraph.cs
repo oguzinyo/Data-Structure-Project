@@ -43,7 +43,7 @@ namespace BlockchainAnalysis.Models
         }
 
         // Graf yapısına yönlü bir kenar (transfer işlemi) ekler
-        public void AddTransaction(string fromAddress, string toAddress, decimal amount)
+        public void AddTransaction(string fromAddress, string toAddress, decimal amount, decimal fee = 0m)
         {
             // Gönderen veya alıcı sistemde yoksa, otomatik olarak oluştur ve ağa dahil et
             if (!Wallets.ContainsKey(fromAddress)) AddWallet(fromAddress);
@@ -52,8 +52,8 @@ namespace BlockchainAnalysis.Models
             var fromNode = Wallets[fromAddress];
             var toNode = Wallets[toAddress];
 
-            // Yeni yönlü kenarı (işlemi) oluştur
-            var transaction = new TransactionEdge(fromNode, toNode, amount);
+            // Yeni yönlü kenarı (işlemi) oluştur (Uyumluluk için Fee dahil edildi)
+            var transaction = new TransactionEdge(fromNode, toNode, amount, fee);
 
             // İşlemi gönderenin komşuluk listesine ekle (Yönlü graf olduğu için sadece gönderene eklenir)
             AdjacencyList[fromAddress].Add(transaction);
@@ -61,7 +61,7 @@ namespace BlockchainAnalysis.Models
             // Bakiye (Balance) Güncellemesi - Thread-Safe Modeli
             lock (fromNode.BalanceLock)
             {
-                fromNode.Balance -= amount;
+                fromNode.Balance -= (amount + fee); // Gönderenden transfer miktarı + madenci ücreti kesilir
             }
             
             lock (toNode.BalanceLock)
