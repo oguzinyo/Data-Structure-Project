@@ -50,7 +50,7 @@ if (transactionTable.TryGetValue(lookupTransactionId, out var foundTransaction))
 }
 
 PrintSection("3) Yonlu Graf - Transfer Agi");
-var graph = new DirectedGraph();
+var graph = new BlockchainGraph();
 foreach (var tx in transactions)
 {
     graph.AddEdge(tx);
@@ -58,14 +58,12 @@ foreach (var tx in transactions)
 
 foreach (var address in graph.GetAddresses())
 {
-    var incoming = graph.GetIncomingTotal(address);
-    var outgoing = graph.GetOutgoingTotal(address);
-    var netFlow = incoming - outgoing;
-    Console.WriteLine($"{address} | Incoming: {incoming} | Outgoing: {outgoing} | Net Flow: {netFlow}");
+    var node = graph.GetNode(address);
+    Console.WriteLine($"{node.Address} | Incoming: {node.IncomingTotal} | Outgoing: {node.OutgoingTotal} | Net Flow: {node.NetFlow}");
 
-    foreach (var edge in graph.GetOutgoingTransactions(address))
+    foreach (var edge in graph.GetOutgoingEdges(address))
     {
-        Console.WriteLine($"  -> {edge.ToAddress} | Amount: {edge.Amount} | Time: {edge.Timestamp:HH:mm:ss}");
+        Console.WriteLine($"  Edge {ShortId(edge.TransactionId)}: {edge.FromAddress} -> {edge.ToAddress} | Amount: {edge.Amount} | Time: {edge.Timestamp:HH:mm:ss}");
     }
 }
 
@@ -92,7 +90,7 @@ payloads[0] = payloads[0].Replace("12.50", "99.99");
 Console.WriteLine($"Degistirilmis veri dogrulama sonucu: {merkleTree.Verify(payloads, merkleRoot)}");
 
 PrintSection("6) Faz 1 Kontrol Ozeti");
-Console.WriteLine("[OK] Directed Graph: Cuzdanlar dugum, transferler yonlu kenar olarak modellendi.");
+Console.WriteLine("[OK] BlockchainGraph: GraphNode ve TransactionEdge adjacency list ile baglandi.");
 Console.WriteLine("[OK] Merkle Tree: Islem hashleri ile Merkle Root uretildi ve dogrulandi.");
 Console.WriteLine("[OK] Hash Table: Cuzdan adresleri ve islem ID'leri O(1) ortalama erisim icin tutuldu.");
 Console.WriteLine("[OK] Queue: BFS dolasimi icin kullanildi.");
