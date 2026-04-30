@@ -1,8 +1,4 @@
 
-Bu proje, bir blokzincir ağındaki işlem verilerinin bütünlüğünü ve doğruluğunu kontrol etmek amacıyla C# ile geliştirilmiş
-bir Merkle Tree (Karma Ağacı) uygulamasıdır.
-=======
-
 # Proje 4: Blokzincir İşlem Ağları - Yönlü Graf Altyapısı (Faz 1)
 
 Bu modül, blokzincir sistemlerindeki işlem verilerini sadeleştirilmiş bir graf modeli üzerinden incelemek amacıyla geliştirilmiştir. Projenin Faz 1 aşamasında, ağın temelini oluşturan yönlü graf veri yapısı ve cüzdan yönetim mekanizmaları kurulmuştur.
@@ -10,35 +6,12 @@ Bu modül, blokzincir sistemlerindeki işlem verilerini sadeleştirilmiş bir gr
 ## 🛠 Teknik Mimari ve Veri Yapıları
 
 Proje gereksinimleri doğrultusunda, sistemin yüksek performanslı ve güvenli çalışması için aşağıdaki yapılar tercih edilmiştir:
->>>>>>> origin/main
 
 ### 1. WalletNode (Cüzdan Düğümü)
 Ağdaki her bir benzersiz cüzdan adresini temsil eden **düğüm (vertex)** yapısıdır.
 * **Address (string):** Cüzdanın benzersiz kimliğidir. Blokzincir mantığına uygun olarak `private set` ile korunur ve değiştirilemez.
 * **Balance (double):** Cüzdanın güncel bakiyesini tutar. Sadeleştirilmiş model gereği transferler gerçekleştikçe dinamik olarak güncellenir.
 
-<<<<<<< HEAD
-
-📌 Özellikler
-Veri Bütünlüğü: Yaprak düğümlerdeki (leaf nodes) herhangi bir değişikliğin kök hash (Root Hash) üzerindeki etkisi gözlemlenebilir.
-
-Hash Algoritması: Veriler, kriptografik olarak güvenli bir şekilde birleştirilerek ağaç yapısı oluşturulur.
-
-Hızlı Doğrulama: Büyük veri setleri içinde belirli bir işlemin varlığı, tüm veri setini kontrol etmeye gerek kalmadan doğrulanabilir.
-
-
-
-🛠 Teknik Detaylar
-Dil: C# [.NET]
-
-Mimari: İkili Ağaç (Binary Tree) yapısı üzerine kurgulanmıştır.
-
-Dosyalar:
-
-MerkleTreeFunc.cs: Ağacın oluşturulması ve hash hesaplama mantığını içeren temel sınıf.
-
-Demo.cs: Sistemin nasıl çalıştığını gösteren test ve senaryo dosyası.
-=======
 ### 2. TransactionEdge (İşlem Kenarı)
 İki cüzdan arasındaki para transferini mühürleyen **yönlü kenar (edge)** yapısıdır.
 * **Yönlü Akış:** İşlem, gönderen (From) ve alıcı (To) düğümlerini referans alarak paranın akış yönünü tanımlar.
@@ -101,4 +74,3 @@ Bu modül kapsamında, proje föyünde belirtilen aşağıdaki kriterler başar�
 -   **Big-O Analizi:** Tasarlanan veri yapılarının zaman ve uzay karmaşıklığı analizleri teknik dökümantasyona eklenmiştir.
 ---
 *Bu döküman, iş bölümünde Faz 1'in Yönlü Graf kısmından sorumlu olan Batuhan Özdemir'in sorumlulukları kapsamında hazırlanan kodların teknik dökümantasyonudur.*
-
