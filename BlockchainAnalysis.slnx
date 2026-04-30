@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="BlockchainAnalysis.App/BlockchainAnalysis.App.csproj" />
+  <Project Path="BlockchainAnalysis.Core/BlockchainAnalysis.Core.csproj" />
+  <Project Path="BlockchainAnalysis.DataStructures/BlockchainAnalysis.DataStructures.csproj" />
+  <Project Path="BlockchainAnalysis.Models/BlockchainAnalysis.Models.csproj" />
+</Solution>
