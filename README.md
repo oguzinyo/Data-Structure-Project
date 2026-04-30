@@ -26,6 +26,7 @@ BlockchainAnalysis.Core/
   IHashTable.cs
 
 BlockchainAnalysis.DataStructures/
+  BlockchainGraph.cs
   CustomQueue.cs
   CustomStack.cs
   DirectedGraph.cs
@@ -33,6 +34,8 @@ BlockchainAnalysis.DataStructures/
   MerkleTree.cs
 
 BlockchainAnalysis.Models/
+  GraphNode.cs
+  TransactionEdge.cs
   Transaction.cs
   Wallet.cs
   WalletNode.cs
@@ -51,14 +54,30 @@ docker-compose.yml
 
 ## Veri Yapilari
 
-### Directed Graph
+### BlockchainGraph
 
-`DirectedGraph`, kripto islem agini yonlu graf olarak temsil eder.
+`BlockchainGraph`, kripto islem agini node-edge modeliyle yonlu graf olarak temsil eder.
 
-- Dugumler cuzdan adresleridir.
-- Kenarlar transfer islemleridir.
+- Dugumler `GraphNode` sinifi ile temsil edilir.
+- Kenarlar `TransactionEdge` sinifi ile temsil edilir.
 - Kenarlarda transfer miktari ve zaman bilgisi bulunur.
 - Graf dongu icerebilir. Ornek: `0x7788 -> 0xA1B2` transferi ile para akisi tekrar baslangic adresine donebilir.
+
+Node ve edge iliskisi adjacency list ile kurulur:
+
+```text
+BlockchainGraph
+  nodes[address] -> GraphNode
+  adjacencyList[fromAddress] -> List<TransactionEdge>
+```
+
+Ornek:
+
+```text
+GraphNode(0xA1B2)
+  Edge: 0xA1B2 -> 0xC3D4 | Amount: 12,50
+  Edge: 0xA1B2 -> 0xE5F6 | Amount: 4,25
+```
 
 Demo ciktisinda her cuzdan icin su bilgiler gosterilir:
 
@@ -178,6 +197,7 @@ docker-compose down
 ## Faz 1 Durumu
 
 - `[OK]` Directed Graph
+- `[OK]` BlockchainGraph node-edge modeli
 - `[OK]` Merkle Tree
 - `[OK]` Hash Table
 - `[OK]` Queue
