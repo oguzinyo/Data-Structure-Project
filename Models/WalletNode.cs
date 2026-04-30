@@ -27,7 +27,7 @@ namespace BlockchainAnalysis.Models
             }
 
             Address = address;
-            Balance = 0.0; //yeni oluşturulan cüzdanın bakiyesi
+            Balance = 0m; //yeni oluşturulan cüzdanın bakiyesi
         }
 
         public override string ToString() //override ile Object sınıfından gelen varsayılan metne çevrilme davranışını eziyoruz.
