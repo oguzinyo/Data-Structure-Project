@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace BlockchainAnalysis.DataStructures;
+namespace BlockchainAnalysis.Models;
 
 public class MerkleNode
 {
