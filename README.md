@@ -1,76 +1,43 @@
+Merkle Tree Verification System
+Bu modül, Blokzincir İşlem Ağlarının Analizi projesi kapsamında, veri bütünlüğünü (integrity) sağlamak ve büyük veri setleri içindeki işlemleri hızlıca doğrulamak amacıyla geliştirilmiştir.
 
-# Proje 4: Blokzincir İşlem Ağları - Yönlü Graf Altyapısı (Faz 1)
+🛠 Merkle Tree Nasıl Çalışır?
 
-Bu modül, blokzincir sistemlerindeki işlem verilerini sadeleştirilmiş bir graf modeli üzerinden incelemek amacıyla geliştirilmiştir. Projenin Faz 1 aşamasında, ağın temelini oluşturan yönlü graf veri yapısı ve cüzdan yönetim mekanizmaları kurulmuştur.
+Merkle Tree (Hash Tree), her yaprak düğümün bir veri bloğunun (bu projede blokzincir işlemleri) hash'ini temsil ettiği, yaprak olmayan her düğümün ise alt düğümlerinin hash'lerinin toplamının hash'ini temsil ettiği bir veri yapısıdır.
 
-## 🛠 Teknik Mimari ve Veri Yapıları
+Yaprak Düğümleri (Leaf Nodes): Her bir işlem (transaction) SHA-256 gibi bir algoritma ile hash'lenir.
 
-Proje gereksinimleri doğrultusunda, sistemin yüksek performanslı ve güvenli çalışması için aşağıdaki yapılar tercih edilmiştir:
+Eşleştirme: Hash'ler çiftler halinde gruplanır. Eğer tek sayıda işlem varsa, son işlem kendisiyle eşlenerek ağaç tamamlanır.
 
-### 1. WalletNode (Cüzdan Düğümü)
-Ağdaki her bir benzersiz cüzdan adresini temsil eden **düğüm (vertex)** yapısıdır.
-* **Address (string):** Cüzdanın benzersiz kimliğidir. Blokzincir mantığına uygun olarak `private set` ile korunur ve değiştirilemez.
-* **Balance (double):** Cüzdanın güncel bakiyesini tutar. Sadeleştirilmiş model gereği transferler gerçekleştikçe dinamik olarak güncellenir.
+Hiyerarşik Özet: Çiftlenen hash'ler birleştirilip tekrar hash'lenir (Parent Hash). Bu işlem, tepede tek bir Merkle Root kalana kadar devam eder.
 
-### 2. TransactionEdge (İşlem Kenarı)
-İki cüzdan arasındaki para transferini mühürleyen **yönlü kenar (edge)** yapısıdır.
-* **Yönlü Akış:** İşlem, gönderen (From) ve alıcı (To) düğümlerini referans alarak paranın akış yönünü tanımlar.
-* **Metadata:** Her işlem miktar (Amount) ve işlemin gerçekleştiği anı gösteren zaman damgası (Timestamp) bilgilerini taşır.
-* **Doğrulama:** Negatif miktarlı veya tanımsız düğümler arası transferleri engelleyen güvenlik kontrollerine sahiptir.
+Doğrulama (Verification): Verideki tek bir bit değişse bile, bu değişim ağaç boyunca yukarı doğru yansır ve Merkle Root tamamen değişir. Bu sayede tüm veriyi kontrol etmeden verinin bozulup bozulmadığı anlaşılabilir.
 
-### 3. BlockchainGraph (Graf Yönetim Merkezi)
-Tüm ağın koordinasyonunu sağlayan ana sınıftır.
-* **Komşuluk Listesi (Adjacency List):** Bellek tasarrufu sağlamak amacıyla (Sparse Graph yapısı için) tercih edilmiştir.
-* **Thread-Safety (Eşzamanlılık):** `ConcurrentDictionary` ve `ConcurrentBag` koleksiyonları kullanılarak, çoklu iş parçacıklarının (thread) aynı anda veri yazması durumunda oluşabilecek çakışmalar (race conditions) önlenmiştir.
-* **Hızlı Erişim:** Cüzdan adresleri üzerinden yapılan sorgular, Hash Table mantığıyla ortalama **O(1)** sürede sonuçlanır.
+⏳ Zaman Karmaşıklığı Analizi (Time Complexity)
 
-## 📈 Algoritmik Analiz (Big-O)
+Merkle Tree, özellikle büyük veri setlerinde (Big Data) verimliliği artırmak için tasarlanmıştır. İşlemlerin sayısı n olarak kabul edildiğinde karmaşıklık değerleri şu şekildedir:
 
-Sistemin ölçeklenebilirliği için aşağıdaki karmaşıklık değerleri hedeflenmiştir:
+Ağaç Oluşturma (Tree Construction): Tüm yaprakları hash'lemek ve yukarı doğru Root'a ulaşmak için her düğümü bir kez ziyaret eder. Karmaşıklık: O(n).
 
-| İşlem | Zaman Karmaşıklığı | Açıklama |
-| :--- | :--- | :--- |
-| **Cüzdan Ekleme** | $O(1)$ | Hash Table (Dictionary) kullanımı sayesinde doğrudan erişim. |
-| **İşlem (Kenar) Kaydı** | $O(1)$ | Gönderen cüzdanın komşuluk listesine doğrudan ekleme. |
-| **Cüzdan Bulma** | $O(1)$ | Benzersiz adres anahtarı ile hızlı sorgulama. |
-| **Hafıza Kullanımı** | $O(V + E)$ | Toplam düğüm (V) ve kenar (E) sayısıyla orantılı verimli alan kullanımı. |
+Merkle Root Hesaplama: Hiyerarşik yapı sayesinde işlem sayısı logaritmik olarak azalır.
 
-## 🚀 Entegrasyon Notları
+Doğrulama (Verification / Merkle Proof): En büyük avantajı buradadır. Bir işlemin ağaçta olup olmadığını kanıtlamak için tüm ağacı taramak yerine sadece ağacın yüksekliği kadar hash kontrolü yapılır. Karmaşıklık: O(logn).
 
-Bu altyapı, projenin sonraki fazlarında yer alan aşağıdaki görevler için temel oluşturur:
-* **Faz 2 (Algoritmalar):** BFS ve DFS algoritmaları, bu sınıftaki `AdjacencyList` üzerinden fon akışı analizi yapacaktır.
-* **Faz 3 (Görselleştirme):** Arayüz katmanı, düğüm boyutlarını ve kenar kalınlıklarını belirlemek için buradaki bakiye ve miktar verilerini okuyacaktır.
+Veri Güncelleme: Bir yaprak değiştiğinde sadece o yaprağın bağlı olduğu dal (path) üzerindeki hash'ler güncellenir. Karmaşıklık: O(logn).
 
-## ✅ Karşılanan Proje Gereksinimleri ve Uygulama Yöntemi
-Bu modül kapsamında, proje föyünde belirtilen aşağıdaki kriterler başarıyla karşılanmıştır:
+Özellikler:
 
-### B.1. Takım Çalışması ve Teknolojik Altyapı
+Veri Bütünlüğü: İşlemlerin hiyerarşik bir doğrulama yapısı ile korunması.
 
--   **Eşzamanlılık ve Mikroservis Yaklaşımı:** Yapay zeka motorunun ana bellekten bağımsız çalışabilmesi için `ConcurrentDictionary` ve `ConcurrentBag` kullanılarak **Thread-safe** bir altyapı kurulmuştur.
-    
--   **Versiyon Kontrolü (Git):** Doğrudan `main` dalına müdahale edilmeden, `feature-directed-graph` dalı üzerinden izole bir geliştirme süreci yürütülmüştür.
-    
+C# Implementation: Nesne yönelimli programlama (OOP) prensiplerine uygun, optimize edilmiş Merkle Tree sınıfı.
 
-### B.3. Teslim Kuralları ve Değerlendirme
+Hızlı Sorgulama: Merkle Proof mantığı ile verimli veri doğrulama altyapısı.
 
--   **İsimlendirme Şartı:** Veritabanı ve fonksiyon isimlendirmelerinde (WalletNode, TransactionEdge, BlockchainGraph vb.) **Türkçe karakter içermeyen** ve global standartlara uygun bir format kullanılmıştır.
-    
+Proje Yapısı:
 
-### Proje Konusu: Blokzincir İşlem Ağları Analizi
+Modül, projenin BlockchainAnalysis.DataStructures klasörü altında yer almaktadır:
 
--   **Yönlü Graf Modellemesi:** Cüzdan adresleri düğüm (vertex), para transferleri ise yönlü kenarlar (edge) olarak modellenmiştir.
-    
--   **Kenar Özellikleri:** Her transfer işlemi için miktar (amount) ve zaman (timestamp) bilgisi veri modeline dahil edilmiştir.
-    
--   **Döngü (Cycle) Desteği:** Sistem tasarımı, blokzincir ağlarında sık rastlanan döngüsel transferlere (A -> B -> A) izin verecek esnekliktedir.
-    
--   **Karma Tablo (Hash Table) Kullanımı:** Cüzdan adreslerine erişim süresini ortalama **O(1)** seviyesine çekmek için Hash Table tabanlı `ConcurrentDictionary` yapısı entegre edilmiştir.
-    
--   **Bakiye Hesaplama:** Sadeleştirilmiş model gereği, işlem anında gönderen ve alıcı bakiyeleri otomatik olarak güncellenecek şekilde kodlanmıştır.
-    
+MerkleTree.cs: Ağacın oluşturulması, hash hesaplama ve Merkle Root üretim mantığını içeren ana sınıf.
 
-### Raporlama ve Analiz
+MerkleTree.csproj: Modülün bağımlılıklarını yöneten proje dosyası.
 
--   **Big-O Analizi:** Tasarlanan veri yapılarının zaman ve uzay karmaşıklığı analizleri teknik dökümantasyona eklenmiştir.
----
-*Bu döküman, iş bölümünde Faz 1'in Yönlü Graf kısmından sorumlu olan Batuhan Özdemir'in sorumlulukları kapsamında hazırlanan kodların teknik dökümantasyonudur.*
