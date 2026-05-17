@@ -28,7 +28,7 @@ public class DirectedGraph : IGraph
 
         _adjacency[transaction.FromAddress].Add(transaction);
 
-        // Yeni modelde ApproximateBalance yerine doï¿½rudan Balance kullanï¿½yoruz
+        // Yeni modelde ApproximateBalance yerine doðrudan Balance kullanýyoruz
         lock (_wallets[transaction.FromAddress].BalanceLock)
         {
             _wallets[transaction.FromAddress].Balance -= transaction.Amount;

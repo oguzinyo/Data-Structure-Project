@@ -7,7 +7,7 @@ namespace BlockchainAnalysis.DataStructures;
 
 public class BlockchainGraph : IGraph
 {
-    // Eski GraphNode yerine doÄŸrudan WalletNode kullanÄ±yoruz
+    // Eski GraphNode yerine doðrudan WalletNode kullanýyoruz
     private readonly HashTable<string, WalletNode> _nodes = new(hashFunc: WalletHashFunctions.HashFNV1a);
     private readonly HashTable<string, List<TransactionEdge>> _adjacencyList = new(hashFunc: WalletHashFunctions.HashFNV1a);
     private readonly List<string> _addresses = new();
@@ -24,7 +24,7 @@ public class BlockchainGraph : IGraph
 
         _adjacencyList[edge.FromAddress].Add(edge);
 
-        // AddOutgoing ve AddIncoming fonksiyonlarÄ± yerine doÄŸrudan kilitli bakiye gÃ¼ncellemesi yapÄ±yoruz
+        // AddOutgoing ve AddIncoming fonksiyonlarý yerine doðrudan kilitli bakiye güncellemesi yapýyoruz
         lock (_nodes[edge.FromAddress].BalanceLock)
         {
             _nodes[edge.FromAddress].Balance -= edge.Amount;
