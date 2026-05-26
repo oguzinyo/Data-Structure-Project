@@ -165,4 +165,21 @@ public class DirectedGraph : IGraph
             AddVertex(new WalletNode(address));
         }
     }
+
+    // 1. Geriye Dönük Akış İçin Gelen Kenarları Bulma Metodu
+    public IReadOnlyList<TransactionEdge> GetIncomingEdges(string address)
+    {
+        var incomingEdges = new List<TransactionEdge>();
+        foreach (var walletAddress in _addresses)
+        {
+            foreach (var edge in GetOutgoingEdges(walletAddress))
+            {
+                if (edge.ToAddress == address)
+                {
+                    incomingEdges.Add(edge);
+                }
+            }
+        }
+        return incomingEdges;
+    }
 }
