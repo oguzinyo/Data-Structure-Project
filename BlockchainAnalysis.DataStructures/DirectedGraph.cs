@@ -165,4 +165,71 @@ public class DirectedGraph : IGraph
             AddVertex(new WalletNode(address));
         }
     }
+
+    // 1. Geriye Dönük Akış İçin Gelen Kenarları Bulma Metodu
+    public IReadOnlyList<TransactionEdge> GetIncomingEdges(string address)
+    {
+        var incomingEdges = new List<TransactionEdge>();
+        foreach (var walletAddress in _addresses)
+        {
+            foreach (var edge in GetOutgoingTransactions(walletAddress))
+            {
+                if (edge.ToAddress == address)
+                {
+                    incomingEdges.Add(edge);
+                }
+            }
+        }
+        return incomingEdges;
+    }
+
+    public List<TransactionEdge> GetForwardFundFlow(string startAddress)
+    {
+        var flowEdges = new List<TransactionEdge>();
+        var visitedEdges = new HashTable<string, bool>(16, WalletHashFunctions.HashFNV1a);
+        var queue = new CustomQueue<string>();
+
+        if (!_wallets.ContainsKey(startAddress)) return flowEdges;
+        queue.Enqueue(startAddress);
+
+        while (!queue.IsEmpty)
+        {
+            var currentAddress = queue.Dequeue();
+            foreach (var transaction in GetOutgoingTransactions(currentAddress))
+            {
+                if (!visitedEdges.ContainsKey(transaction.TransactionId))
+                {
+                    visitedEdges.Add(transaction.TransactionId, true);
+                    flowEdges.Add(transaction);
+                    queue.Enqueue(transaction.ToAddress);
+                }
+            }
+        }
+        return flowEdges;
+    }
+
+    public List<TransactionEdge> GetBackwardFundFlow(string startAddress)
+    {
+        var flowEdges = new List<TransactionEdge>();
+        var visitedEdges = new HashTable<string, bool>(16, WalletHashFunctions.HashFNV1a);
+        var queue = new CustomQueue<string>();
+
+        if (!_wallets.ContainsKey(startAddress)) return flowEdges;
+        queue.Enqueue(startAddress);
+
+        while (!queue.IsEmpty)
+        {
+            var currentAddress = queue.Dequeue();
+            foreach (var edge in GetIncomingEdges(currentAddress))
+            {
+                if (!visitedEdges.ContainsKey(edge.TransactionId))
+                {
+                    visitedEdges.Add(edge.TransactionId, true);
+                    flowEdges.Add(edge);
+                    queue.Enqueue(edge.FromAddress);
+                }
+            }
+        }
+        return flowEdges;
+    }
 }

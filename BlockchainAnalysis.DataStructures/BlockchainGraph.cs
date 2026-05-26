@@ -140,4 +140,86 @@ public class BlockchainGraph : IGraph
         _adjacencyList.Add(address, new List<TransactionEdge>());
         _addresses.Add(address);
     }
+
+    // 1. Geriye Dönük Akış İçin Gelen Kenarları Bulma Metodu
+    public IReadOnlyList<TransactionEdge> GetIncomingEdges(string address)
+    {
+        var incomingEdges = new List<TransactionEdge>();
+        foreach (var walletAddress in _addresses)
+        {
+            foreach (var edge in GetOutgoingEdges(walletAddress))
+            {
+                if (edge.ToAddress == address)
+                {
+                    incomingEdges.Add(edge);
+                }
+            }
+        }
+        return incomingEdges;
+    }
+
+    // 2. İleriye Dönük Fon Akışı (İşlem Döndüren ve Döngü Korumalı BFS)
+    public List<TransactionEdge> GetForwardFundFlow(string startAddress)
+    {
+        var flowEdges = new List<TransactionEdge>();
+        // Blokzincirdeki döngüleri (A -> B -> A) kırmak için ID bazlı takip
+        var visitedEdges = new HashTable<string, bool>(16, WalletHashFunctions.HashFNV1a);
+        var queue = new CustomQueue<string>();
+
+        if (!_nodes.ContainsKey(startAddress))
+        {
+            return flowEdges;
+        }
+
+        queue.Enqueue(startAddress);
+
+        while (!queue.IsEmpty)
+        {
+            var currentAddress = queue.Dequeue();
+
+            foreach (var edge in GetOutgoingEdges(currentAddress))
+            {
+                if (!visitedEdges.ContainsKey(edge.TransactionId))
+                {
+                    visitedEdges.Add(edge.TransactionId, true);
+                    flowEdges.Add(edge);
+                    queue.Enqueue(edge.ToAddress); // Paranın gittiği yeni adresi kuyruğa ekle
+                }
+            }
+        }
+
+        return flowEdges;
+    }
+
+    // 3. Geriye Dönük Fon Kaynağı İzleme (İşlem Döndüren BFS)
+    public List<TransactionEdge> GetBackwardFundFlow(string startAddress)
+    {
+        var flowEdges = new List<TransactionEdge>();
+        var visitedEdges = new HashTable<string, bool>(16, WalletHashFunctions.HashFNV1a);
+        var queue = new CustomQueue<string>();
+
+        if (!_nodes.ContainsKey(startAddress))
+        {
+            return flowEdges;
+        }
+
+        queue.Enqueue(startAddress);
+
+        while (!queue.IsEmpty)
+        {
+            var currentAddress = queue.Dequeue();
+
+            foreach (var edge in GetIncomingEdges(currentAddress))
+            {
+                if (!visitedEdges.ContainsKey(edge.TransactionId))
+                {
+                    visitedEdges.Add(edge.TransactionId, true);
+                    flowEdges.Add(edge);
+                    queue.Enqueue(edge.FromAddress); // Paranın geldiği kaynak adresi kuyruğa ekle
+                }
+            }
+        }
+
+        return flowEdges;
+    }
 }

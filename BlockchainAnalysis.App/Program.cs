@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BlockchainAnalysis.Models;
 using BlockchainAnalysis.DataStructures;
+using BlockchainAnalysis.Core;
 
 namespace BlockchainAnalysis.App
 {
@@ -10,6 +11,7 @@ namespace BlockchainAnalysis.App
     {
         static void Main(string[] args)
         {
+            /*
             Console.WriteLine("============================================================");
             Console.WriteLine(" BLOKZINCIR ISLEM AGLARI ANALIZI - FAZ 1 DEMO");
             Console.WriteLine("============================================================");
@@ -145,8 +147,70 @@ namespace BlockchainAnalysis.App
 
             Console.WriteLine("\nCikmak icin Enter'a basin...");
             Console.ReadLine();  
+            */
+            TestFundFlowFilters();
         }
-        
+
+        public static void TestFundFlowFilters()
+        {
+            Console.WriteLine("============================================================");
+            Console.WriteLine(" FAZ 2 DEMO - FUND FLOW TRACKER FILTRELEME TESTI");
+            Console.WriteLine("============================================================");
+
+            var graph = new BlockchainGraph();
+
+            // 1. Test Düğümlerini (Cüzdanları) Oluşturalım
+            var w1 = new WalletNode("0xALICE");
+            var w2 = new WalletNode("0xBOB");
+            var w3 = new WalletNode("0xCHARLIE");
+            var w4 = new WalletNode("0xDAVID");
+
+            graph.AddVertex(w1);
+            graph.AddVertex(w2);
+            graph.AddVertex(w3);
+            graph.AddVertex(w4);
+
+            // 2. İşlemleri Ekleyelim (Zaman damgaları ardışık olsun diye kısa beklemeler koyuyoruz)
+            graph.AddEdge(new TransactionEdge(w1, w2, 50m, 1m)); // Alice -> Bob (50)
+            System.Threading.Thread.Sleep(50);
+
+            graph.AddEdge(new TransactionEdge(w2, w3, 150m, 2m)); // Bob -> Charlie (150)
+            System.Threading.Thread.Sleep(50);
+
+            graph.AddEdge(new TransactionEdge(w1, w4, 20m, 0.5m)); // Alice -> David (20)
+            System.Threading.Thread.Sleep(50);
+
+            graph.AddEdge(new TransactionEdge(w3, w4, 200m, 5m)); // Charlie -> David (200)
+
+            // 3. Sizin Yazdığınız Tracker'ı Başlatalım
+            var tracker = new FundFlowTracker(graph);
+
+            // --- TEST SENARYOLARI ---
+
+            Console.WriteLine("\nSenaryo A: 0xALICE'ten cikan TUM fon akisi (Ileriye Donuk BFS)");
+            var allFlow = tracker.TrackForwardFlow("0xALICE");
+            foreach (var tx in allFlow)
+            {
+                Console.WriteLine($" -> {tx.FromAddress} gonderdi {tx.ToAddress} | Miktar: {tx.Amount} | Zaman: {tx.Timestamp:HH:mm:ss.fff}");
+            }
+
+            Console.WriteLine("\nSenaryo B: 0xALICE'ten cikan akis (Miktar Filtresi: Sadece 100 birim uzeri)");
+            var highValueFlow = tracker.TrackForwardFlow("0xALICE", minAmount: 100m);
+            foreach (var tx in highValueFlow)
+            {
+                Console.WriteLine($" -> {tx.FromAddress} gonderdi {tx.ToAddress} | Miktar: {tx.Amount} | Zaman: {tx.Timestamp:HH:mm:ss.fff}");
+            }
+
+            Console.WriteLine("\nSenaryo C: 0xDAVID'e gelen fonlarin asil kaynagi (Geriye Donuk BFS)");
+            var pastFlow = tracker.TrackBackwardFlow("0xDAVID");
+            foreach (var tx in pastFlow)
+            {
+                Console.WriteLine($" <- {tx.FromAddress} gonderdi {tx.ToAddress} | Miktar: {tx.Amount} | Zaman: {tx.Timestamp:HH:mm:ss.fff}");
+            }
+
+            Console.WriteLine("\nTest tamamlandi. Cikmak icin Enter'a basin...");
+            Console.ReadLine();
+        }
 
         private static List<(string From, string To, decimal Amount, decimal Fee)> GetMockTransactions()
         {
