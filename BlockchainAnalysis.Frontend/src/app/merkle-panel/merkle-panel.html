@@ -1,0 +1,31 @@
+<div class="merkle-container" [class.valid]="treeData.isValid" [class.invalid]="!treeData.isValid">
+  <h2>Merkle Ağacı Analizi</h2>
+  <p>Durum: <strong>{{ treeData.isValid ? 'Doğrulandı (Bütünlük Sağlam)' : 'HATA! (Veri Manipülasyonu)' }}</strong></p>
+
+  <div class="tree-wrapper">
+    <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: treeData.rootNode }"></ng-container>
+  </div>
+</div>
+
+<ng-template #nodeTemplate let-node>
+  <div class="tree-node-container" *ngIf="node">
+
+    <div class="node-box" [title]="node.hash">
+      <span class="hash-text">{{ node.hash | slice:0:8 }}...</span>
+      <span class="data-text" *ngIf="node.data">{{ node.data }}</span>
+    </div>
+
+    <div class="children-container" *ngIf="node.left || node.right">
+      <div class="child-wrapper" *ngIf="node.left">
+        <div class="connector-line left-line"></div>
+        <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: node.left }"></ng-container>
+      </div>
+
+      <div class="child-wrapper" *ngIf="node.right">
+        <div class="connector-line right-line"></div>
+        <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: node.right }"></ng-container>
+      </div>
+    </div>
+
+  </div>
+</ng-template>
