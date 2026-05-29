@@ -8,8 +8,11 @@ namespace BlockchainAnalysis.Core
     {
         void AddVertex(WalletNode wallet);
         void AddEdge(TransactionEdge transaction);
-        IReadOnlyList<TransactionEdge> GetIncomingEdges(string address);
         List<TransactionEdge> GetForwardFundFlow(string startAddress);
         List<TransactionEdge> GetBackwardFundFlow(string startAddress);
+        
+        // BalanceEngine'in ihtiyaç duyduğu iki kritik metot:
+        IReadOnlyList<TransactionEdge> GetOutgoingEdges(string address);
+        IReadOnlyList<TransactionEdge> GetIncomingEdges(string address); 
     }
 }
