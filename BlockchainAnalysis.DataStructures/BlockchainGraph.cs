@@ -11,29 +11,29 @@ public class BlockchainGraph : IGraph
     private readonly HashTable<string, WalletNode> _nodes = new(hashFunc: WalletHashFunctions.HashFNV1a);
     private readonly HashTable<string, List<TransactionEdge>> _adjacencyList = new(hashFunc: WalletHashFunctions.HashFNV1a);
     private readonly List<string> _addresses = new();
+    private readonly object _graphLock = new object();
 
     public void AddVertex(WalletNode wallet)
     {
-        AddNodeIfMissing(wallet.Address);
+        lock (_graphLock)
+        {
+            AddNodeIfMissing(wallet.Address);
+        }
     }
 
-    public void AddEdge(TransactionEdge edge)
+public void AddEdge(TransactionEdge edge)
     {
-        AddNodeIfMissing(edge.FromAddress);
-        AddNodeIfMissing(edge.ToAddress);
-
-        _adjacencyList[edge.FromAddress].Add(edge);
-
-        // AddOutgoing ve AddIncoming fonksiyonları yerine doğrudan kilitli bakiye güncellemesi yapıyoruz
-        lock (_nodes[edge.FromAddress].BalanceLock)
+        lock (_graphLock)
         {
-            _nodes[edge.FromAddress].Balance -= edge.Amount;
+            AddNodeIfMissing(edge.FromAddress);
+            AddNodeIfMissing(edge.ToAddress);
+
+            _adjacencyList[edge.FromAddress].Add(edge);
         }
 
-        lock (_nodes[edge.ToAddress].BalanceLock)
-        {
-            _nodes[edge.ToAddress].Balance += edge.Amount;
-        }
+        // Kendi yazdığın thread-safe metotlarla bakiyeleri güncelliyoruz
+        _nodes[edge.FromAddress].DeductFunds(edge.Amount);
+        _nodes[edge.ToAddress].AddFunds(edge.Amount);
     }
 
     public IReadOnlyList<string> GetAddresses() => _addresses;
@@ -48,14 +48,18 @@ public class BlockchainGraph : IGraph
         throw new KeyNotFoundException($"Graph node not found: {address}");
     }
 
-    public IReadOnlyList<TransactionEdge> GetOutgoingEdges(string address)
+public IReadOnlyList<TransactionEdge> GetOutgoingEdges(string address)
     {
-        if (!_adjacencyList.TryGetValue(address, out var edges))
+        lock (_graphLock)
         {
-            return Array.Empty<TransactionEdge>();
+            if (!_adjacencyList.TryGetValue(address, out var edges))
+            {
+                return Array.Empty<TransactionEdge>();
+            }
+            
+            // Okuma sırasında veri değişmesin diye listenin kopyasını döndürüyoruz
+            return new List<TransactionEdge>(edges);
         }
-
-        return edges;
     }
 
     public List<string> BreadthFirstTraversal(string startAddress)
