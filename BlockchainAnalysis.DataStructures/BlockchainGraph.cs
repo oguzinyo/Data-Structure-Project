@@ -226,4 +226,114 @@ public IReadOnlyList<BatuhanTransactionEdge> BatuhanGetOutgoingEdges(string addr
 
         return flowEdges;
     }
+
+    // 1. Target Node Analysis: Finds the path between start and target addresses using BFS.
+    public List<string> FindPath(string startAddress, string targetAddress)
+    {
+        var path = new List<string>();
+        var parentMap = new HashTable<string, string>(hashFunc: WalletHashFunctions.HashFNV1a);
+        var queue = new CustomQueue<string>();
+
+        if (!_nodes.ContainsKey(startAddress) || !_nodes.ContainsKey(targetAddress))
+            return path;
+
+        parentMap.Add(startAddress, null);
+        queue.Enqueue(startAddress);
+
+        bool found = false;
+        while (!queue.IsEmpty)
+        {
+            var current = queue.Dequeue();
+            if (current == targetAddress)
+            {
+                found = true;
+                break;
+            }
+
+            foreach (var edge in BatuhanGetOutgoingEdges(current))
+            {
+                if (!parentMap.ContainsKey(edge.ToAddress))
+                {
+                    parentMap.Add(edge.ToAddress, current);
+                    queue.Enqueue(edge.ToAddress);
+                }
+            }
+        }
+
+        if (found)
+        {
+            var curr = targetAddress;
+            while (curr != null)
+            {
+                path.Insert(0, curr);
+                curr = parentMap[curr];
+            }
+        }
+
+        return path;
+    }
+
+    // 2. Maximum Capacity Path: Finds the route with the highest transaction volume.
+    public List<string> FindMaxCapacityPath(string startAddress, string targetAddress)
+    {
+        var parentMap = new HashTable<string, string>(hashFunc: WalletHashFunctions.HashFNV1a);
+        var capacities = new HashTable<string, decimal>(hashFunc: WalletHashFunctions.HashFNV1a);
+        var addresses = BatuhanGetAddresses();
+
+        foreach (var addr in addresses)
+        {
+            capacities.Add(addr, decimal.MinValue);
+        }
+
+        capacities[startAddress] = decimal.MaxValue;
+        parentMap.Add(startAddress, null);
+
+        var unvisited = new List<string>(addresses);
+
+        while (unvisited.Count > 0)
+        {
+            string current = null;
+            decimal maxCap = decimal.MinValue;
+
+            foreach (var node in unvisited)
+            {
+                if (capacities[node] > maxCap)
+                {
+                    maxCap = capacities[node];
+                    current = node;
+                }
+            }
+
+            if (current == null || current == targetAddress || maxCap == decimal.MinValue)
+                break;
+
+            unvisited.Remove(current);
+
+            foreach (var edge in BatuhanGetOutgoingEdges(current))
+            {
+                decimal pathCapacity = Math.Min(capacities[current], edge.Amount);
+
+                if (pathCapacity > capacities[edge.ToAddress])
+                {
+                    capacities[edge.ToAddress] = pathCapacity;
+                    if (!parentMap.ContainsKey(edge.ToAddress))
+                        parentMap.Add(edge.ToAddress, current);
+                    else
+                        parentMap[edge.ToAddress] = current;
+                }
+            }
+        }
+
+        var path = new List<string>();
+        if (parentMap.ContainsKey(targetAddress))
+        {
+            var curr = targetAddress;
+            while (curr != null)
+            {
+                path.Insert(0, curr);
+                curr = parentMap[curr];
+            }
+        }
+        return path;
+    }
 }
