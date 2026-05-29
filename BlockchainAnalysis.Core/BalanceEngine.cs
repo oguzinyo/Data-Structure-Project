@@ -16,8 +16,8 @@ namespace BlockchainAnalysis.Core
         public decimal CalculateDynamicBalance(string walletAddress)
         {
             // Sisteme gelen ve giden paraları çekiyoruz
-            var incomingEdges = _graph.GetIncomingEdges(walletAddress);
-            var outgoingEdges = _graph.GetOutgoingEdges(walletAddress);
+            var incomingEdges = _graph.BatuhanGetIncomingEdges(walletAddress);
+            var outgoingEdges = _graph.BatuhanGetOutgoingEdges(walletAddress);
 
             // Miktarları topluyoruz (Gelen - Giden kuralı)
             decimal totalIncoming = incomingEdges.Sum(e => e.Amount);

@@ -6,13 +6,13 @@ namespace BlockchainAnalysis.Core
 {
     public interface IGraph
     {
-        void AddVertex(WalletNode wallet);
-        void AddEdge(TransactionEdge transaction);
-        List<TransactionEdge> GetForwardFundFlow(string startAddress);
-        List<TransactionEdge> GetBackwardFundFlow(string startAddress);
+        void BatuhanAddVertex(BatuhanWalletNode wallet);
+        void BatuhanAddEdge(BatuhanTransactionEdge transaction);
+        List<BatuhanTransactionEdge> BatuhanGetForwardFundFlow(string startAddress);
+        List<BatuhanTransactionEdge> BatuhanGetBackwardFundFlow(string startAddress);
         
         // BalanceEngine'in ihtiyaç duyduğu iki kritik metot:
-        IReadOnlyList<TransactionEdge> GetOutgoingEdges(string address);
-        IReadOnlyList<TransactionEdge> GetIncomingEdges(string address); 
+        IReadOnlyList<BatuhanTransactionEdge> BatuhanGetOutgoingEdges(string address);
+        IReadOnlyList<BatuhanTransactionEdge> BatuhanGetIncomingEdges(string address); 
     }
 }

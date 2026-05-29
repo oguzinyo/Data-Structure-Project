@@ -7,7 +7,7 @@ namespace BlockchainAnalysis.Core
     public class DynamicBalanceEngine
     {
         // Thread-safe bakiye güncelleme fonksiyonu
-        public void UpdateBalanceSafely(WalletNode wallet, decimal amount, bool isIncoming)
+        public void UpdateBalanceSafely(BatuhanWalletNode wallet, decimal amount, bool isIncoming)
         {
             // Cüzdan kilitleniyor, başka hiçbir işlem aynı anda bu bakiyeyi değiştiremez
             lock (wallet.BalanceLock)
@@ -24,7 +24,7 @@ namespace BlockchainAnalysis.Core
         }
 
         // PDF Kuralı: Gelen transferlerin toplamı - Giden transferlerin toplamı
-        public decimal CalculateCurrentBalanceSafely(string address, IReadOnlyList<TransactionEdge> incomingEdges, IReadOnlyList<TransactionEdge> outgoingEdges)
+        public decimal CalculateCurrentBalanceSafely(string address, IReadOnlyList<BatuhanTransactionEdge> incomingEdges, IReadOnlyList<BatuhanTransactionEdge> outgoingEdges)
         {
             decimal totalIncoming = 0m;
             decimal totalOutgoing = 0m;

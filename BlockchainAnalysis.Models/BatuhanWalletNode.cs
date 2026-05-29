@@ -8,7 +8,7 @@ using System;
 
 namespace BlockchainAnalysis.Models
 {
-    public class WalletNode
+    public class BatuhanWalletNode
     {
         public string Address { get; private set; } //cüzdanın benzersiz kimliğidir.
         //okuma kısmı herkese açıktır fakat yazma sadece constructor içinde belirlenecektir, dışardan değiştirilemez (immutable)
@@ -49,7 +49,7 @@ namespace BlockchainAnalysis.Models
             }
         }
         
-        public WalletNode(string address) //constructor
+        public BatuhanWalletNode(string address) //constructor
         {
             if (string.IsNullOrWhiteSpace(address)) //dışardan gelen adres içeriye almaya uygun mu?
             {
