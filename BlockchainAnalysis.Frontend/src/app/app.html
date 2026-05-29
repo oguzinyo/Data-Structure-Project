@@ -1,39 +1,192 @@
-<div style="position: relative; width: 100vw; height: 100vh; overflow: hidden; background-color: #070d1a;">
+<div class="dashboard-wrapper">
 
     <app-graph-engine [highlightedPath]="MehmetHighlight"
-                      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+                      class="graph-background">
     </app-graph-engine>
 
-    <div class="terminal-container" style="position: absolute; top: 20px; left: 20px; z-index: 10; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(8px);">
-        <header class="terminal-header">
-            <div class="status-indicator"></div>
-            <h2>Ağ İzleme Terminali</h2>
-            <p class="subtitle">Fon Akışı ve Rota Tespit Modülü</p>
-        </header>
+    <div class="glass-overlay">
 
-        <div class="control-grid">
-            <div class="input-group">
-                <label>Kaynak Cüzdan (Örn: 0xA1B2)</label>
-                <input type="text" #startInput placeholder="0x..." (input)="startWallet = startInput.value" class="modern-input">
+        <div class="left-column">
+
+            <div class="glass-panel main-panel">
+
+                <div class="panel-header">
+                    <h2>Ağ İzleme Terminali</h2>
+                    <span class="settings-icon">⚙</span>
+                </div>
+
+                <div class="input-group">
+                    <label>Kaynak Cüzdan</label>
+
+                    <div class="input-wrapper">
+                        <input type="text"
+                               #startInput
+                               placeholder="Address: 4C611063..."
+                               (input)="startWallet = startInput.value">
+
+                        <span class="qr-icon">⚏</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Hedef Cüzdan</label>
+
+                    <div class="input-wrapper">
+                        <input type="text"
+                               #targetInput
+                               placeholder="Address: 23e98070..."
+                               (input)="targetWallet = targetInput.value">
+
+                        <span class="qr-icon">⚏</span>
+                    </div>
+                </div>
+
+                <button class="neon-button primary"
+                        (click)="MehmetFindPath()">
+
+                    ☍ Rotayı Bul
+                </button>
+
+                <button class="neon-button secondary"
+                        (click)="MehmetClear()"
+                        style="margin-top: 10px;">
+
+                    Temizle
+                </button>
+
+                <div class="slider-group">
+
+                    <div class="slider-header">
+                        <label>Hacim Filtresi (Min)</label>
+
+                        <span class="neon-badge">
+                            {{ MehmetMinAmount }} BTC
+                        </span>
+                    </div>
+
+                    <input type="range"
+                           min="0"
+                           max="5000"
+                           value="0"
+                           #amountSlider
+                           (input)="MehmetUpdateFilter(amountSlider.value)"
+                           class="neon-slider">
+                </div>
+
             </div>
 
-            <div class="input-group">
-                <label>Hedef Cüzdan (Örn: 0xC3D4)</label>
-                <input type="text" #targetInput placeholder="0x..." (input)="targetWallet = targetInput.value" class="modern-input">
+            <div class="glass-panel activity-panel">
+
+                <div class="panel-header">
+                    <h3>Activity Feed</h3>
+                    <span class="dots">...</span>
+                </div>
+
+                <div class="activity-list">
+
+                    <div class="activity-item">
+
+                        <div class="icon-box btc">₿</div>
+
+                        <div class="activity-details">
+                            <span class="amount">
+                                1,620,828.38 USD
+                                <small>BTC</small>
+                            </span>
+                        </div>
+
+                        <span class="time">15:33 ago</span>
+                    </div>
+
+                    <div class="activity-item">
+
+                        <div class="icon-box eth">Ξ</div>
+
+                        <div class="activity-details">
+                            <span class="amount">
+                                4,90,685.33 USD
+                                <small>ETH</small>
+                            </span>
+                        </div>
+
+                        <span class="time">15:32 ago</span>
+                    </div>
+
+                </div>
+
             </div>
+
         </div>
 
-        <div class="filter-section">
-            <div class="slider-header">
-                <label>Hacim Filtresi (Min)</label>
-                <span class="badge">{{ MehmetMinAmount }} BTC</span>
+        <div class="right-column">
+
+            <div class="glass-panel details-panel">
+
+                <div class="panel-header">
+                    <h3>İşlem Detayları</h3>
+                </div>
+
+                <pre class="json-viewer">
+&#123;
+                <span class="j-key">"name"</span>: <span class="j-str">"transaction"</span>,
+                <span class="j-key">"address"</span>: <span class="j-str">"826875d02676637ad8..."</span>,
+                <span class="j-key">"status"</span>: <span class="j-str">"valid"</span>,
+                <span class="j-key">"data"</span>: &#123;
+                <span class="j-key">"amount"</span>: <span class="j-str">"3500 BTC"</span>,
+                <span class="j-key">"volume"</span>: <span class="j-str">"500 GC"</span>,
+                <span class="j-key">"validator"</span>: <span class="j-str">"18229696..."</span>
+    &#125;
+&#125;
+                </pre>
+
             </div>
-            <input type="range" min="0" max="5000" value="0" #amountSlider (input)="MehmetUpdateFilter(amountSlider.value)" class="modern-slider">
+
+            <div class="glass-panel merkle-panel">
+
+                <div class="panel-header">
+                    <h3>Merkle Tree</h3>
+                </div>
+
+                <div class="merkle-mockup">
+
+                    <div class="tree-level">
+                        <div class="node green">1</div>
+                    </div>
+
+                    <div class="tree-line"></div>
+
+                    <div class="tree-level">
+                        <div class="node">0</div>
+                        <div class="node green">1</div>
+                    </div>
+
+                    <div class="tree-line"></div>
+
+                    <div class="tree-level leaves">
+                        <div class="node">1</div>
+                        <div class="node">0</div>
+                        <div class="node green">0</div>
+                        <div class="node">0</div>
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="action-bar">
-            <button class="btn-primary" (click)="MehmetFindPath()">Rotayı Parlat</button>
-            <button class="btn-secondary" (click)="MehmetClear()">Temizle</button>
+        <div class="bottom-bar">
+
+            <span class="status-indicator"></span>
+
+            <span class="status-text">
+                Network
+                <strong class="text-green">Healthy</strong>
+                - Sync 99.8% | Latest Block #8,451,102
+            </span>
+
         </div>
+
     </div>
+
 </div>
