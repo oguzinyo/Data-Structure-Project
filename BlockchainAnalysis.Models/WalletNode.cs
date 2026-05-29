@@ -25,6 +25,29 @@ namespace BlockchainAnalysis.Models
 
         public readonly object BalanceLock = new object();
         // Bakiye güncellemelerini senkronize etmek için kullanılacak kilit nesnesi
+        public void AddFunds(decimal amount)
+        {
+            lock (BalanceLock)
+            {
+                Balance += amount;
+            }
+        }
+
+        public void DeductFunds(decimal amount)
+        {
+            lock (BalanceLock)
+            {
+                Balance -= amount;
+            }
+        }
+
+        public decimal GetCurrentBalance()
+        {
+            lock (BalanceLock)
+            {
+                return Balance;
+            }
+        }
         
         public WalletNode(string address) //constructor
         {
