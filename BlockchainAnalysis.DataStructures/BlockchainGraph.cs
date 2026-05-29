@@ -228,7 +228,7 @@ public IReadOnlyList<BatuhanTransactionEdge> BatuhanGetOutgoingEdges(string addr
     }
 
     // 1. Target Node Analysis: Finds the path between start and target addresses using BFS.
-    public List<string> FindPath(string startAddress, string targetAddress)
+    public List<string> MehmetFindPath(string startAddress, string targetAddress)
     {
         var path = new List<string>();
         var parentMap = new HashTable<string, string>(hashFunc: WalletHashFunctions.HashFNV1a);
@@ -274,7 +274,7 @@ public IReadOnlyList<BatuhanTransactionEdge> BatuhanGetOutgoingEdges(string addr
     }
 
     // 2. Maximum Capacity Path: Finds the route with the highest transaction volume.
-    public List<string> FindMaxCapacityPath(string startAddress, string targetAddress)
+    public List<string> MehmetFindMaxCapacityPath(string startAddress, string targetAddress)
     {
         var parentMap = new HashTable<string, string>(hashFunc: WalletHashFunctions.HashFNV1a);
         var capacities = new HashTable<string, decimal>(hashFunc: WalletHashFunctions.HashFNV1a);
