@@ -11,7 +11,7 @@ namespace BlockchainAnalysis.App
     {
         static void Main(string[] args)
         {
-            /*
+            
             Console.WriteLine("============================================================");
             Console.WriteLine(" BLOKZINCIR ISLEM AGLARI ANALIZI - FAZ 1 DEMO");
             Console.WriteLine("============================================================");
@@ -147,7 +147,7 @@ namespace BlockchainAnalysis.App
 
             Console.WriteLine("\nCikmak icin Enter'a basin...");
             Console.ReadLine();  
-            */
+            
             TestFundFlowFilters();
         }
 

@@ -134,8 +134,10 @@ export class GraphEngineComponent implements AfterViewInit, OnChanges, OnDestroy
 
 
   ngAfterViewInit(): void {
+    if (typeof window === 'undefined') return;
     this.observeSize();
     this.renderGraph();
+    
   }
 
 
@@ -169,6 +171,7 @@ export class GraphEngineComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   private observeSize(): void {
+    if (typeof ResizeObserver === 'undefined') return;
     const el = this.svgContainer.nativeElement.parentElement!;
     this.resizeObserver = new ResizeObserver(([entry]) => {
       this.width = entry.contentRect.width;
