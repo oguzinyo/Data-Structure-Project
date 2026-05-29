@@ -8,7 +8,7 @@ using System;
 
 namespace BlockchainAnalysis.Models
 {
-    public class WalletNode
+    public class BatuhanWalletNode
     {
         public string Address { get; private set; } //cüzdanın benzersiz kimliğidir.
         //okuma kısmı herkese açıktır fakat yazma sadece constructor içinde belirlenecektir, dışardan değiştirilemez (immutable)
@@ -25,8 +25,31 @@ namespace BlockchainAnalysis.Models
 
         public readonly object BalanceLock = new object();
         // Bakiye güncellemelerini senkronize etmek için kullanılacak kilit nesnesi
+        public void AddFunds(decimal amount)
+        {
+            lock (BalanceLock)
+            {
+                Balance += amount;
+            }
+        }
+
+        public void DeductFunds(decimal amount)
+        {
+            lock (BalanceLock)
+            {
+                Balance -= amount;
+            }
+        }
+
+        public decimal GetCurrentBalance()
+        {
+            lock (BalanceLock)
+            {
+                return Balance;
+            }
+        }
         
-        public WalletNode(string address) //constructor
+        public BatuhanWalletNode(string address) //constructor
         {
             if (string.IsNullOrWhiteSpace(address)) //dışardan gelen adres içeriye almaya uygun mu?
             {

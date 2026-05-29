@@ -7,12 +7,12 @@ Bu modül, blokzincir sistemlerindeki işlem verilerini sadeleştirilmiş bir gr
 
 Proje gereksinimleri doğrultusunda, sistemin yüksek performanslı ve güvenli çalışması için aşağıdaki yapılar tercih edilmiştir:
 
-### 1. WalletNode (Cüzdan Düğümü)
+### 1. BatuhanWalletNode (Cüzdan Düğümü)
 Ağdaki her bir benzersiz cüzdan adresini temsil eden **düğüm (vertex)** yapısıdır.
 * **Address (string):** Cüzdanın benzersiz kimliğidir. Blokzincir mantığına uygun olarak `private set` ile korunur ve değiştirilemez.
 * **Balance (double):** Cüzdanın güncel bakiyesini tutar. Sadeleştirilmiş model gereği transferler gerçekleştikçe dinamik olarak güncellenir.
 
-### 2. TransactionEdge (İşlem Kenarı)
+### 2. BatuhanTransactionEdge (İşlem Kenarı)
 İki cüzdan arasındaki para transferini mühürleyen **yönlü kenar (edge)** yapısıdır.
 * **Yönlü Akış:** İşlem, gönderen (From) ve alıcı (To) düğümlerini referans alarak paranın akış yönünü tanımlar.
 * **Metadata:** Her işlem miktar (Amount) ve işlemin gerçekleştiği anı gösteren zaman damgası (Timestamp) bilgilerini taşır.
@@ -53,7 +53,7 @@ Bu modül kapsamında, proje föyünde belirtilen aşağıdaki kriterler başar�
 
 ### B.3. Teslim Kuralları ve Değerlendirme
 
--   **İsimlendirme Şartı:** Veritabanı ve fonksiyon isimlendirmelerinde (WalletNode, TransactionEdge, BlockchainGraph vb.) **Türkçe karakter içermeyen** ve global standartlara uygun bir format kullanılmıştır.
+-   **İsimlendirme Şartı:** Veritabanı ve fonksiyon isimlendirmelerinde (BatuhanWalletNode, BatuhanTransactionEdge, BlockchainGraph vb.) **Türkçe karakter içermeyen** ve global standartlara uygun bir format kullanılmıştır.
     
 
 ### Proje Konusu: Blokzincir İşlem Ağları Analizi

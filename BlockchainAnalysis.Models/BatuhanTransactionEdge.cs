@@ -10,7 +10,7 @@ using System;
 
 namespace BlockchainAnalysis.Models
 {
-    public class TransactionEdge
+    public class BatuhanTransactionEdge
     {
         // Eski modele uyumluluk için eklenen özellikler
         public string TransactionId { get; private set; }
@@ -20,10 +20,10 @@ namespace BlockchainAnalysis.Models
         public string FromAddress => From?.Address ?? string.Empty;
         public string ToAddress => To?.Address ?? string.Empty;
 
-        public WalletNode From { get; private set; }
+        public BatuhanWalletNode From { get; private set; }
         //paranın çıktığı kaynak cüzdan, private olmasıyla birlikte sadece okunabilir olması sağlanır
         
-        public WalletNode To { get; private set; }
+        public BatuhanWalletNode To { get; private set; }
         //hedefteki cüzdandır.
         
         public decimal Amount { get; private set; }
@@ -33,7 +33,7 @@ namespace BlockchainAnalysis.Models
         public DateTime Timestamp { get; private set; }
         //işlemin gerçekleştiği zaman bilgisi. blokzincirlerde kronoloji kritiktir.
 
-        public TransactionEdge(WalletNode fromNode, WalletNode toNode, decimal amount, decimal fee = 0m)
+        public BatuhanTransactionEdge(BatuhanWalletNode fromNode, BatuhanWalletNode toNode, decimal amount, decimal fee = 0m)
         {//constructor. bi kenarın oluşabilmesi için yönünün ve ağırlığının verilmesini zorunlu kılar.
             if (fromNode == null || toNode == null)
             {//dangling edge yani hiçbi düğüme bağlı olmayan bi kenar olmasını enggeler

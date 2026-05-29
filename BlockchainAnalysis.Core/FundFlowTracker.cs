@@ -16,19 +16,19 @@ namespace BlockchainAnalysis.Core
             _graph = graph ?? throw new ArgumentNullException(nameof(graph));
         }
 
-        public List<TransactionEdge> TrackForwardFlow(string startAddress, DateTime? startTime = null, DateTime? endTime = null, decimal? minAmount = null)
+        public List<BatuhanTransactionEdge> TrackForwardFlow(string startAddress, DateTime? startTime = null, DateTime? endTime = null, decimal? minAmount = null)
         {
-            var allFlow = _graph.GetForwardFundFlow(startAddress);
+            var allFlow = _graph.BatuhanGetForwardFundFlow(startAddress);
             return ApplyFilters(allFlow, startTime, endTime, minAmount);
         }
 
-        public List<TransactionEdge> TrackBackwardFlow(string endAddress, DateTime? startTime = null, DateTime? endTime = null, decimal? minAmount = null)
+        public List<BatuhanTransactionEdge> TrackBackwardFlow(string endAddress, DateTime? startTime = null, DateTime? endTime = null, decimal? minAmount = null)
         {
-            var allPastFlow = _graph.GetBackwardFundFlow(endAddress);
+            var allPastFlow = _graph.BatuhanGetBackwardFundFlow(endAddress);
             return ApplyFilters(allPastFlow, startTime, endTime, minAmount);
         }
 
-        private List<TransactionEdge> ApplyFilters(List<TransactionEdge> flow, DateTime? startTime, DateTime? endTime, decimal? minAmount)
+        private List<BatuhanTransactionEdge> ApplyFilters(List<BatuhanTransactionEdge> flow, DateTime? startTime, DateTime? endTime, decimal? minAmount)
         {
             var filteredFlow = flow.AsEnumerable();
 

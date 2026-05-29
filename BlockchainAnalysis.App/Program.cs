@@ -20,19 +20,19 @@ namespace BlockchainAnalysis.App
             // 1. Graf Motorunun ve Mock Verilerin Kurulumu
             BlockchainGraph graph = new BlockchainGraph();
             var transactions = GetMockTransactions();
-            var transactionEdges = new List<TransactionEdge>();
+            var BatuhanTransactionEdges = new List<BatuhanTransactionEdge>();
 
             Console.WriteLine("1) Sentetik Islem Verileri");
             Console.WriteLine("--------------------------");
 
             foreach (var tx in transactions)
             {
-                var fromNode = new WalletNode(tx.From);
-                var toNode = new WalletNode(tx.To);
+                var fromNode = new BatuhanWalletNode(tx.From);
+                var toNode = new BatuhanWalletNode(tx.To);
 
-                var edge = new TransactionEdge(fromNode, toNode, tx.Amount, tx.Fee);
-                graph.AddEdge(edge);
-                transactionEdges.Add(edge); // Merkle ve Hash işlemleri için listeye alıyoruz
+                var edge = new BatuhanTransactionEdge(fromNode, toNode, tx.Amount, tx.Fee);
+                graph.BatuhanAddEdge(edge);
+                BatuhanTransactionEdges.Add(edge); // Merkle ve Hash işlemleri için listeye alıyoruz
 
                 string shortId = edge.TransactionId.Substring(0, 8);
                 Console.WriteLine($"{shortId} | {tx.From} -> {tx.To} | Amount: {tx.Amount:F2} | Fee: {tx.Fee:F2} | Time: {edge.Timestamp.ToString("HH:mm:ss")}");
@@ -45,10 +45,10 @@ namespace BlockchainAnalysis.App
 
             // Senin yazdığın FNV-1a Hash fonksiyonunu kullanan tablolar oluşturuluyor
             var walletTable = new HashTable<string, string>(16, WalletHashFunctions.HashFNV1a);
-            var txTable = new HashTable<string, TransactionEdge>(16, WalletHashFunctions.HashFNV1a);
+            var txTable = new HashTable<string, BatuhanTransactionEdge>(16, WalletHashFunctions.HashFNV1a);
 
             // Verileri tablolara işliyoruz
-            foreach (var edge in transactionEdges)
+            foreach (var edge in BatuhanTransactionEdges)
             {
                 if (!walletTable.ContainsKey(edge.FromAddress)) walletTable.Add(edge.FromAddress, "Wallet");
                 if (!walletTable.ContainsKey(edge.ToAddress)) walletTable.Add(edge.ToAddress, "Wallet");
@@ -65,7 +65,7 @@ namespace BlockchainAnalysis.App
 
             Console.WriteLine("O(1) cuzdan erisimi: " + (walletTable.ContainsKey("0xA1B2") ? "0xA1B2" : "Bulunamadi"));
 
-            var sampleTx = transactionEdges.FirstOrDefault(t => t.FromAddress == "0xC3D4");
+            var sampleTx = BatuhanTransactionEdges.FirstOrDefault(t => t.FromAddress == "0xC3D4");
             if (sampleTx != null && txTable.TryGetValue(sampleTx.TransactionId, out var foundTx))
             {
                 string sampleShortId = foundTx.TransactionId.Substring(0, 8);
@@ -80,8 +80,8 @@ namespace BlockchainAnalysis.App
             string[] orderedAddresses = { "0xA1B2", "0xC3D4", "0xE5F6", "0x7788" };
             foreach (var address in orderedAddresses)
             {
-                var node = graph.GetNode(address);
-                var edges = graph.GetOutgoingEdges(address);
+                var node = graph.BatuhanGetNode(address);
+                var edges = graph.BatuhanGetOutgoingEdges(address);
 
                 Console.WriteLine($"{node.Address} | Balance: {node.Balance:F2}");
                 foreach (var edge in edges)
@@ -96,10 +96,10 @@ namespace BlockchainAnalysis.App
             Console.WriteLine("---------------------------------");
             string startNode = "0xA1B2";
 
-            var bfsResult = graph.BreadthFirstTraversal(startNode);
+            var bfsResult = graph.BatuhanBreadthFirstTraversal(startNode);
             Console.WriteLine($"BFS (Queue) from {startNode}: " + string.Join(" -> ", bfsResult));
 
-            var dfsResult = graph.DepthFirstTraversal(startNode);
+            var dfsResult = graph.BatuhanDepthFirstTraversal(startNode);
             Console.WriteLine($"DFS (Stack) from {startNode}: " + string.Join(" -> ", dfsResult));
             Console.WriteLine();
 
@@ -109,9 +109,9 @@ namespace BlockchainAnalysis.App
 
             // İşlemleri benzersiz birer "payload" (yük) stringine çeviriyoruz
             var payloads = new List<string>();
-            for (int i = 0; i < transactionEdges.Count; i++)
+            for (int i = 0; i < BatuhanTransactionEdges.Count; i++)
             {
-                var edge = transactionEdges[i];
+                var edge = BatuhanTransactionEdges[i];
                 string payload = $"{edge.TransactionId}{edge.FromAddress}{edge.ToAddress}{edge.Amount}";
                 payloads.Add(payload);
 
@@ -160,27 +160,27 @@ namespace BlockchainAnalysis.App
             var graph = new BlockchainGraph();
 
             // 1. Test Düğümlerini (Cüzdanları) Oluşturalım
-            var w1 = new WalletNode("0xALICE");
-            var w2 = new WalletNode("0xBOB");
-            var w3 = new WalletNode("0xCHARLIE");
-            var w4 = new WalletNode("0xDAVID");
+            var w1 = new BatuhanWalletNode("0xALICE");
+            var w2 = new BatuhanWalletNode("0xBOB");
+            var w3 = new BatuhanWalletNode("0xCHARLIE");
+            var w4 = new BatuhanWalletNode("0xDAVID");
 
-            graph.AddVertex(w1);
-            graph.AddVertex(w2);
-            graph.AddVertex(w3);
-            graph.AddVertex(w4);
+            graph.BatuhanAddVertex(w1);
+            graph.BatuhanAddVertex(w2);
+            graph.BatuhanAddVertex(w3);
+            graph.BatuhanAddVertex(w4);
 
             // 2. İşlemleri Ekleyelim (Zaman damgaları ardışık olsun diye kısa beklemeler koyuyoruz)
-            graph.AddEdge(new TransactionEdge(w1, w2, 50m, 1m)); // Alice -> Bob (50)
+            graph.BatuhanAddEdge(new BatuhanTransactionEdge(w1, w2, 50m, 1m)); // Alice -> Bob (50)
             System.Threading.Thread.Sleep(50);
 
-            graph.AddEdge(new TransactionEdge(w2, w3, 150m, 2m)); // Bob -> Charlie (150)
+            graph.BatuhanAddEdge(new BatuhanTransactionEdge(w2, w3, 150m, 2m)); // Bob -> Charlie (150)
             System.Threading.Thread.Sleep(50);
 
-            graph.AddEdge(new TransactionEdge(w1, w4, 20m, 0.5m)); // Alice -> David (20)
+            graph.BatuhanAddEdge(new BatuhanTransactionEdge(w1, w4, 20m, 0.5m)); // Alice -> David (20)
             System.Threading.Thread.Sleep(50);
 
-            graph.AddEdge(new TransactionEdge(w3, w4, 200m, 5m)); // Charlie -> David (200)
+            graph.BatuhanAddEdge(new BatuhanTransactionEdge(w3, w4, 200m, 5m)); // Charlie -> David (200)
 
             // 3. Sizin Yazdığınız Tracker'ı Başlatalım
             var tracker = new FundFlowTracker(graph);
