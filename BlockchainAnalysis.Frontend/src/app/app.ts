@@ -1,12 +1,12 @@
 import { Component, OnInit, ViewEncapsulation,ChangeDetectorRef } from '@angular/core';
 import { GraphEngineComponent, HighlightedPath } from './graph-engine/graph-engine';
 import { BlockchainDataService } from './services/blockchain-data.service';
-import { MerklePanelComponent } from './merkle-panel/merkle-panel';
+import { BatuhanMerklePanelComponent } from './merkle-panel/merkle-panel';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [GraphEngineComponent, MerklePanelComponent],
+  imports: [GraphEngineComponent, BatuhanMerklePanelComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
   encapsulation: ViewEncapsulation.None
