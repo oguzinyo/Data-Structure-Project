@@ -30,21 +30,20 @@
   .tooltip-title {
     color: #2dd4bf;
   }
-  
-  .info-panel {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    background: #0d1526;
-    border: 1px solid #1a2d4a;
-    border-left: 3px solid #2dd4bf;
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 11px;
-    z-index: 50;
-    min-width: 200px;
-    color: #94a3b8;
-  }
+
+/* Ana bilgi paneli genel ayarları */
+.info-panel {
+  position: absolute;
+  top: 20px; /* Kendi tasarımına göre değiştirebilirsin */
+  left: 20px; /* Kendi tasarımına göre değiştirebilirsin */
+  z-index: 9999; /* Paneli kesinlikle diğer tüm grafiklerin ve overlay'lerin üstüne çıkarır */
+  pointer-events: auto;
+  background-color: #0d1526; /* Kendi tasarımına göre arka plan */
+  border: 1px solid #1a2d4a;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
   
   .info-title {
     color: #2dd4bf;
@@ -108,12 +107,13 @@
   
   .edge-line { background: #2563eb; }
 
-  
-  
-  .node-panel {
-    max-height: 320px;
-    overflow-y: auto;
-  }
+
+
+/* Sadece cüzdan detayına (işlem geçmişi olan) özel kaydırma ayarı */
+.node-panel {
+  max-height: 400px; /* Panelin uzayabileceği maksimum boyu sınırlar */
+  overflow-y: auto; /* İçerik 400px'i aşarsa dikey kaydırma çubuğu (scroll) çıkarır */
+}
   
   .tx-title {
     color: #2dd4bf;
@@ -123,11 +123,18 @@
     border-top: 1px solid #1a2d4a;
     padding-top: 8px;
   }
-  
-  .tx-row {
-    border-bottom: 1px solid #0d1a2a;
-    padding: 5px 0;
-    font-size: 10px;
+
+/* İşlem geçmişi satırlarının düzeni (Opsiyonel ama önerilir) */
+.tx-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #1a2d4a;
+}
+
+  .tx-row:last-child {
+    border-bottom: none;
   }
   
   .tx-id {
