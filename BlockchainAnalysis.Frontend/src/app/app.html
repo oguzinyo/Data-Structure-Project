@@ -76,70 +76,49 @@
             </div>
 
             <div class="glass-panel activity-panel">
-
-                <div class="panel-header">
-                    <h3>Activity Feed</h3>
-                    <span class="dots">...</span>
+              <div class="panel-header">
+                <h3>Activity Feed</h3>
+                <span class="dots">...</span>
+              </div>
+              <div class="activity-list">
+                @for (activity of recentActivities; track activity.time) {
+                <div class="activity-item">
+                  <div class="icon-box" [class.btc]="activity.type === 'btc'" [class.eth]="activity.type === 'eth'">
+                    {{ activity.symbol }}
+                  </div>
+                  <div class="activity-details">
+                    <span class="amount">
+                      {{ activity.amount }} {{ activity.currency }}
+                      <small>{{ activity.asset }}</small>
+                    </span>
+                  </div>
+                  <span class="time">{{ activity.time }}</span>
                 </div>
-
-                <div class="activity-list">
-
-                    <div class="activity-item">
-
-                        <div class="icon-box btc">₿</div>
-
-                        <div class="activity-details">
-                            <span class="amount">
-                                1,620,828.38 USD
-                                <small>BTC</small>
-                            </span>
-                        </div>
-
-                        <span class="time">15:33 ago</span>
-                    </div>
-
-                    <div class="activity-item">
-
-                        <div class="icon-box eth">Ξ</div>
-
-                        <div class="activity-details">
-                            <span class="amount">
-                                4,90,685.33 USD
-                                <small>ETH</small>
-                            </span>
-                        </div>
-
-                        <span class="time">15:32 ago</span>
-                    </div>
-
-                </div>
-
+                }
+              </div>
             </div>
 
         </div>
 
         <div class="right-column">
 
-            <div class="glass-panel details-panel">
-
-                <div class="panel-header">
-                    <h3>İşlem Detayları</h3>
-                </div>
-
-                <pre class="json-viewer">
+          <div class="glass-panel details-panel">
+            <div class="panel-header">
+              <h3>İşlem Detayları</h3>
+            </div>
+            <pre class="json-viewer">
 &#123;
-                <span class="j-key">"name"</span>: <span class="j-str">"transaction"</span>,
-                <span class="j-key">"address"</span>: <span class="j-str">"826875d02676637ad8..."</span>,
-                <span class="j-key">"status"</span>: <span class="j-str">"valid"</span>,
-                <span class="j-key">"data"</span>: &#123;
-                <span class="j-key">"amount"</span>: <span class="j-str">"3500 BTC"</span>,
-                <span class="j-key">"volume"</span>: <span class="j-str">"500 GC"</span>,
-                <span class="j-key">"validator"</span>: <span class="j-str">"18229696..."</span>
+            <span class="j-key">"name"</span>: <span class="j-str">"{{ transactionDetails.name }}"</span>,
+            <span class="j-key">"address"</span>: <span class="j-str">"{{ transactionDetails.address }}"</span>,
+            <span class="j-key">"status"</span>: <span class="j-str">"{{ transactionDetails.status }}"</span>,
+            <span class="j-key">"data"</span>: &#123;
+            <span class="j-key">"amount"</span>: <span class="j-str">"{{ transactionDetails.data.amount }}"</span>,
+            <span class="j-key">"volume"</span>: <span class="j-str">"{{ transactionDetails.data.volume }}"</span>,
+            <span class="j-key">"validator"</span>: <span class="j-str">"{{ transactionDetails.data.validator }}"</span>
     &#125;
 &#125;
-                </pre>
-
-            </div>
+    </pre>
+          </div>
 
             <div class="glass-panel merkle-panel">
 
