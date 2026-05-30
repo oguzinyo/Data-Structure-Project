@@ -34,9 +34,9 @@
 /* Ana bilgi paneli genel ayarları */
 .info-panel {
   position: absolute;
-  top: 20px; /* Kendi tasarımına göre değiştirebilirsin */
-  left: 20px; /* Kendi tasarımına göre değiştirebilirsin */
-  z-index: 9999; /* Paneli kesinlikle diğer tüm grafiklerin ve overlay'lerin üstüne çıkarır */
+  top: 50px; /* Kendi tasarımına göre değiştirebilirsin */
+  left: 450px; /* Kendi tasarımına göre değiştirebilirsin */
+  z-index: 15; /* Paneli kesinlikle diğer tüm grafiklerin ve overlay'lerin üstüne çıkarır */
   pointer-events: auto;
   background-color: #0d1526; /* Kendi tasarımına göre arka plan */
   border: 1px solid #1a2d4a;

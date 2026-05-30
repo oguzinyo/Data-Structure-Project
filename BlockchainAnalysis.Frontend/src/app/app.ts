@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation,ChangeDetectorRef } from '@angular/core';
 import { GraphEngineComponent, HighlightedPath } from './graph-engine/graph-engine';
 import { BlockchainDataService } from './services/blockchain-data.service';
 import { MerklePanelComponent } from './merkle-panel/merkle-panel';
@@ -23,7 +23,7 @@ export class App implements OnInit {
   transactionDetails: any = null;
   currentMerkleData: any = null; // Mükerrer tanım silindi, sadece burada bırakıldı
 
-  constructor(private dataService: BlockchainDataService) { }
+  constructor(private dataService: BlockchainDataService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.loadActivities();
@@ -45,11 +45,13 @@ export class App implements OnInit {
     // İşlem detaylarını çek (Servis isimleri ve any tipleri düzeltildi)
     this.dataService.BatuhanGetTransactionDetails(edgeData.id).subscribe((data: any) => {
       this.transactionDetails = data;
+      this.cdr.detectChanges();
     });
 
     // Merkle Tree detaylarını çek
     this.dataService.BatuhanGetMerkleTreeData(edgeData.id).subscribe((data: any) => {
       this.currentMerkleData = data;
+      this.cdr.detectChanges();
     });
   }
 
@@ -78,4 +80,5 @@ export class App implements OnInit {
     this.transactionDetails = null;
     this.currentMerkleData = null;
   }
+
 }
