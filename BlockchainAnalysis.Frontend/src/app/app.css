@@ -31,6 +31,8 @@
   justify-content: space-between;
   padding: 2.5rem;
   box-sizing: border-box;
+  flex-wrap: wrap;
+  overflow-y: auto;
 }
 
 .left-column, .right-column {
@@ -38,7 +40,10 @@
   flex-direction: column;
   gap: 1.5rem;
   pointer-events: auto;
-  width: 380px;
+  width: 100%;
+  max-width: 380px;
+  min-width: 280px;
+  transition: all 0.3s ease;
 }
 
 /* Glassmorphism Panel Ayarları */
