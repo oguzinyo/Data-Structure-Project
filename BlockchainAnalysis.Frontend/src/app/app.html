@@ -1,8 +1,10 @@
 <div class="dashboard-wrapper">
 
-    <app-graph-engine [highlightedPath]="MehmetHighlight"
-                      class="graph-background">
-    </app-graph-engine>
+  <app-graph-engine [highlightedPath]="MehmetHighlight"
+                    (nodeClicked)="BatuhanOnNodeClicked($event)"
+                    (edgeClicked)="BatuhanOnEdgeClicked($event)"
+                    class="graph-background">
+  </app-graph-engine>
 
     <div class="glass-overlay">
 
@@ -106,7 +108,8 @@
             <div class="panel-header">
               <h3>İşlem Detayları</h3>
             </div>
-            <pre class="json-viewer">
+            @if (transactionDetails) {
+<pre class="json-viewer">
 &#123;
             <span class="j-key">"name"</span>: <span class="j-str">"{{ transactionDetails.name }}"</span>,
             <span class="j-key">"address"</span>: <span class="j-str">"{{ transactionDetails.address }}"</span>,
@@ -117,7 +120,12 @@
             <span class="j-key">"validator"</span>: <span class="j-str">"{{ transactionDetails.data.validator }}"</span>
     &#125;
 &#125;
-    </pre>
+</pre>
+            } @else {
+            <div class="json-viewer" style="text-align: center; color: #64748b; padding: 2rem;">
+              Ağ grafiğinden bir işlem seçiniz.
+            </div>
+            }
           </div>
 
             <div class="glass-panel merkle-panel">
