@@ -32,80 +32,65 @@ export class BlockchainDataService {
   }
 
   BatuhanGetMerkleTreeData(txId: string): Observable<any> {
-    // Tüm işlemler tabanda sabit yerlerinde listelenir
-    const baseTxs = ['tx001', 'tx002', 'tx003', 'tx004', 'tx005', 'tx006', 'tx007', 'tx008'];
+    const allTxs = [
+      'tx001', 'tx002', 'tx003', 'tx004', 'tx005', 'tx006', 'tx007',
+      'tx008', 'tx009', 'tx010', 'tx011', 'tx012', 'tx013'
+    ];
 
-    // Eğer tıklanan tx ilk 8 içinde değilse, görsel düzenin bozulmaması için ilk elemana yerleştirilir
-    if (!baseTxs.includes(txId)) {
-      baseTxs[0] = txId;
+    const paddedLength = 16;
+    const baseTxs = [...allTxs];
+    while (baseTxs.length < paddedLength) {
+      baseTxs.push(baseTxs[baseTxs.length - 1]);
     }
 
     const getHash = (id: string) => "0x" + id.toUpperCase() + "F";
 
-    // Katman 0: Yapraklar oluşturulur ve hedef seçilir
-    const leaves = baseTxs.map(id => ({
-      hash: getHash(id),
-      label: id,
-      state: id === txId ? 'target' : 'default' as any
-    }));
+    // TİP HATASI BURADA ÇÖZÜLDÜ: Değişkene açıkça ': any[]' tipi atandı
+    let currentLevel: any[] = baseTxs.map((id, index) => {
+      const isTarget = id === txId && allTxs.indexOf(id) === index;
+      return {
+        hash: getHash(id),
+        label: id,
+        state: isTarget ? 'target' : 'default'
+      };
+    });
 
-    // Katman 1: Alt ikili birleştirmeler ve rota analizi
-    const level1 = [];
-    for (let i = 0; i < leaves.length; i += 2) {
-      const left = leaves[i];
-      const right = leaves[i + 1];
-      let state = 'default' as any;
+    let levelCount = 1;
+    while (currentLevel.length > 1) {
+      // TİP HATASI BURADA ÇÖZÜLDÜ: Ara katman dizisine de ': any[]' atandı
+      const nextLevel: any[] = [];
 
-      if (left.state === 'target' || right.state === 'target') {
-        state = 'computed';
-        left.state = left.state === 'target' ? 'target' : 'proof';
-        right.state = right.state === 'target' ? 'target' : 'proof';
+      for (let i = 0; i < currentLevel.length; i += 2) {
+        const left = currentLevel[i];
+        const right = currentLevel[i + 1];
+
+        let state = 'default';
+
+        if (left.state === 'target' || right.state === 'target' || left.state === 'computed' || right.state === 'computed') {
+          state = 'computed';
+          if (left.state === 'default') left.state = 'proof';
+          if (right.state === 'default') right.state = 'proof';
+        }
+
+        nextLevel.push({
+          hash: "0xL" + levelCount + "_" + (i * 7 + 12).toString(16).toUpperCase(),
+          state: state,
+          left: left,
+          right: right
+        });
       }
 
-      level1.push({
-        hash: "0xL1_" + (i * 7 + 12).toString(16).toUpperCase(),
-        state: state,
-        left: left,
-        right: right
-      });
+      currentLevel = nextLevel;
+      levelCount++;
     }
 
-    // Katman 2: Orta ikili birleştirmeler
-    const level2 = [];
-    for (let i = 0; i < level1.length; i += 2) {
-      const left = level1[i];
-      const right = level1[i + 1];
-      let state = 'default' as any;
-
-      if (left.state === 'computed' || right.state === 'computed') {
-        state = 'computed';
-        left.state = left.state === 'computed' ? 'computed' : 'proof';
-        right.state = right.state === 'computed' ? 'computed' : 'proof';
-      }
-
-      level2.push({
-        hash: "0xL2_" + (i * 9 + 55).toString(16).toUpperCase(),
-        state: state,
-        left: left,
-        right: right
-      });
-    }
-
-    // Katman 3: Kök düğüm birleştirmesi
-    const rootNode = {
-      hash: "0xROOT_MAIN",
-      state: 'root' as any,
-      left: level2[0],
-      right: level2[1]
-    };
-
-    // Kök altındaki dalların ispat durumları eşitlenir
-    if (rootNode.left.state === 'computed') rootNode.right.state = 'proof';
-    if (rootNode.right.state === 'computed') rootNode.left.state = 'proof';
+    const rootNode = currentLevel[0];
+    rootNode.state = 'root';
+    rootNode.hash = "0xROOT_MAIN";
 
     return of({
       isValid: true,
-      rootHash: "0xROOT_MAIN",
+      rootHash: rootNode.hash,
       rootNode: rootNode
     }).pipe(delay(200));
   }
