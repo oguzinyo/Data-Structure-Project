@@ -61,34 +61,70 @@
   .info-row span:last-child {
     color: #f1f5f9;
   }
-  
-  .legend {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    background: #0d1526;
-    border: 1px solid #1a2d4a;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 10px;
-    color: #94a3b8;
-    z-index: 50;
+/* Alt-Orta Yatay Lejant Tasarımı */
+.legend {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999; /* Merkle panelinin altında kalmasını kesin olarak engeller */
+  background-color: rgba(13, 21, 38, 0.85);
+  border: 1px solid #1a2d4a;
+  border-radius: 12px;
+  padding: 10px 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  backdrop-filter: blur(5px);
+  pointer-events: none; /* Farenin lejanta takılıp grafiği engellemesini önler */
+}
+
+.legend-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: bold;
+  color: #2dd4bf;
+  font-size: 11px;
+  border-right: 1px solid #1a2d4a;
+  padding-right: 15px;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+  /* Lejant İçindeki İkonların Ayarları (Eğer yoksa bunları da ekle) */
+  .legend-row .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
   }
-  
-  .legend-title {
-    color: #2dd4bf;
-    letter-spacing: 2px;
-    margin-bottom: 8px;
-    font-size: 9px;
+
+  .legend-row .node-dot {
+    background-color: #1e3a5f;
+    border: 1.5px solid #2dd4bf;
   }
-  
-  .legend-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
+
+  .legend-row .exchange-dot {
+    background-color: #2d0808;
+    border: 1.5px solid #dc2626;
   }
-  
+
+  .legend-row .line {
+    display: inline-block;
+    width: 16px;
+    height: 2px;
+  }
+
+  .legend-row .edge-line {
+    background-color: #2563eb;
+  }
   .dot {
     width: 10px;
     height: 10px;
