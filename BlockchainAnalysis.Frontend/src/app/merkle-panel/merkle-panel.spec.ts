@@ -1,18 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { BatuhanMerklePanelComponent } from './merkle-panel';
 
-import { MerklePanel } from './merkle-panel';
-
-describe('MerklePanel', () => {
-  let component: MerklePanel;
-  let fixture: ComponentFixture<MerklePanel>;
+describe('BatuhanMerklePanelComponent', () => {
+  let component: BatuhanMerklePanelComponent;
+  let fixture: ComponentFixture<BatuhanMerklePanelComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MerklePanel],
+      imports: [BatuhanMerklePanelComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MerklePanel);
+    fixture = TestBed.createComponent(BatuhanMerklePanelComponent);
     component = fixture.componentInstance;
+
+    // Eğer ağaç verisi dışarıdan @Input ile bekleniyorsa, testin patlamaması için boş bir veri setliyoruz
+    component.treeData = {
+      rootHash: 'test',
+      isValid: true,
+      rootNode: { hash: 'test' }
+    };
+
+    fixture.detectChanges();
     await fixture.whenStable();
   });
 

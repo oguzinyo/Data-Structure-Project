@@ -7,6 +7,8 @@ import {
   ElementRef,
   ViewChild,
   Input,
+  Output,
+  EventEmitter ,
   SimpleChanges,
   ChangeDetectorRef,
 } from '@angular/core';
@@ -116,6 +118,9 @@ export class GraphEngineComponent implements AfterViewInit, OnChanges, OnDestroy
 
   @Input() graphData: GraphData = SYNTHETIC_DATA;
   @Input() highlightedPath: HighlightedPath = { nodes: new Set(), edges: new Set() };
+
+  @Output() nodeClicked = new EventEmitter<any>();
+  @Output() edgeClicked = new EventEmitter<any>();
 
   tooltip: { x: number; y: number; lines: string[] } | null = null;
   selectedEdge: TransactionEdge | null = null;
@@ -288,21 +293,49 @@ export class GraphEngineComponent implements AfterViewInit, OnChanges, OnDestroy
           .attr('stroke-opacity', !hasHL ? 0.7 : isHl ? 1 : 0.1);
         this.tooltip = null;
       })
-      .on('click', (_ev: MouseEvent, d) => {
+      .on('click', (ev: MouseEvent, d) => {
+        ev.stopPropagation(); // Olayın alt katmanlara sızmasını engeller
         console.log('edge tıklandı:', d);
-  this.selectedEdge = d;
-  this.selectedNode = null;
-  this.cdr.detectChanges(); 
+
+        this.selectedEdge = d;
+        this.selectedNode = null;
+        this.cdr.detectChanges();
+
+        // ANA EKSİK BURASI:
+        this.edgeClicked.emit(d);
       });
 
-    // Kenar miktar etiketleri
+    // Kenar miktar etiketleri (Tıklanabilir Hitbox)
     const elabels = eg.selectAll<SVGTextElement, TransactionEdge>('text.el')
       .data(edges).enter().append('text').attr('class', 'el')
       .attr('text-anchor', 'middle').attr('dy', -4)
       .attr('fill', d => (!hasHL || hlPath.edges.has(d.id)) ? C.acc : 'transparent')
       .attr('font-size', 9).attr('font-family', "'Courier New',monospace")
-      .attr('pointer-events', 'none')
-      .text(d => `${d.amount}₿`);
+      .style('cursor', 'pointer')
+      .text(d => `${d.amount}₿`)
+      .on('mouseover', (ev: MouseEvent, d) => {
+        this.tooltip = {
+          x: ev.offsetX + 14, y: ev.offsetY - 10,
+          lines: [
+            `TX: ${d.id}`,
+            `Miktar: ${d.amount} ₿`,
+            `${this.getNodeId(d.source)} → ${this.getNodeId(d.target)}`
+          ],
+        };
+      })
+      .on('mouseout', () => {
+        this.tooltip = null;
+      })
+      .on('click', (ev: MouseEvent, d) => {
+        ev.stopPropagation();
+        console.log('Miktar yazısı üzerinden işlem tıklandı:', d);
+
+        this.selectedEdge = d;
+        this.selectedNode = null;
+        this.cdr.detectChanges();
+
+        this.edgeClicked.emit(d);
+      });
 
     // Düğümler
     const ng2 = g.append('g');
@@ -371,15 +404,18 @@ export class GraphEngineComponent implements AfterViewInit, OnChanges, OnDestroy
           .attr('filter', isHl ? 'url(#glow)' : 'none');
         this.tooltip = null;
       })
-      .on('click', (_ev: MouseEvent, d) => {
+      .on('click', (ev: MouseEvent, d) => {
+        ev.stopPropagation(); // Boşluğa tıklanmış gibi algılanmasını önler
         this.selectedNode = d;
         this.selectedEdge = null;
         this.selectedNodeTxs = this.graphData.edges.filter(e => {
           const src = typeof e.source === 'object' ? (e.source as WalletNode).id : e.source;
           const tgt = typeof e.target === 'object' ? (e.target as WalletNode).id : e.target;
           return src === d.id || tgt === d.id;
-        });  
-        this.cdr.detectChanges();     
+        });
+        this.cdr.detectChanges();
+
+        this.nodeClicked.emit(d); // BİLGİYİ DIŞARI FIRLAT
       });
 
     // Tick: pozisyon güncelleme
