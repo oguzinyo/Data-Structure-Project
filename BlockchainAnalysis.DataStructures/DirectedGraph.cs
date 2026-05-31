@@ -91,7 +91,7 @@ public class DirectedGraph : IGraph
     {
         var order = new List<string>();
         var visited = new HashTable<string, bool>(hashFunc: WalletHashFunctions.HashFNV1a);
-        var queue = new CustomQueue<string>();
+        var queue = new UmmetQueue<string>();
 
         if (!_wallets.ContainsKey(startAddress))
         {
@@ -123,7 +123,7 @@ public class DirectedGraph : IGraph
     {
         var order = new List<string>();
         var visited = new HashTable<string, bool>(hashFunc: WalletHashFunctions.HashFNV1a);
-        var stack = new CustomStack<string>();
+        var stack = new UmmetStack<string>();
 
         if (!_wallets.ContainsKey(startAddress))
         {
@@ -187,7 +187,7 @@ public class DirectedGraph : IGraph
     {
         var flowEdges = new List<BatuhanTransactionEdge>();
         var visitedEdges = new HashTable<string, bool>(16, WalletHashFunctions.HashFNV1a);
-        var queue = new CustomQueue<string>();
+        var queue = new UmmetQueue<string>();
 
         if (!_wallets.ContainsKey(startAddress)) return flowEdges;
         queue.Enqueue(startAddress);
@@ -212,7 +212,7 @@ public class DirectedGraph : IGraph
     {
         var flowEdges = new List<BatuhanTransactionEdge>();
         var visitedEdges = new HashTable<string, bool>(16, WalletHashFunctions.HashFNV1a);
-        var queue = new CustomQueue<string>();
+        var queue = new UmmetQueue<string>();
 
         if (!_wallets.ContainsKey(startAddress)) return flowEdges;
         queue.Enqueue(startAddress);
