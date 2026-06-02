@@ -34,6 +34,11 @@
                 </div>
 
                 <button class="neon-button primary" (click)="MehmetFindPath()">☍ Rotayı Bul</button>
+                @if (routeMessage) {
+                    <div style="color: #f87171; font-size: 0.85rem; margin-top: 8px; text-align: center; font-family: 'JetBrains Mono', monospace;">
+                      ⚠ {{ routeMessage }}
+                    </div>
+                }
                 <button class="neon-button secondary" (click)="MehmetClear()" style="margin-top: 10px;">Temizle</button>
 
                 <div class="slider-group">

@@ -116,12 +116,12 @@ namespace BlockchainAnalysis.App
                 payloads.Add(payload);
 
                 // Kendi yazdığın ComputeHash metodu ile SHA256 hesabı
-                string hash = AliMerkleTree.ComputeHash(payload);
+                string hash = MerkleTree.ComputeHash(payload);
                 Console.WriteLine($"Tx Hash {i + 1}: {hash.Substring(0, 16)}...");
             }
 
             // Ağacı inşa et ve kökü al
-            var merkleTree = new AliMerkleTree();
+            var merkleTree = new MerkleTree();
             string rootHash = merkleTree.Build(payloads);
             Console.WriteLine($"Merkle Root: {rootHash.Substring(0, 24)}...");
 

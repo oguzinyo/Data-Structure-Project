@@ -19,13 +19,13 @@ namespace BlockchainAnalysis.DataStructures
      * =========================================================
      */
 
-    public class AliSyntheticDataGenerator
+    public class SyntheticDataGenerator
     {
         // Sabit seed — her çalıştırmada aynı veriyi garanti eder
         private readonly Random _random = new Random(42);
 
         // Singleton — kaç kere new'lense de tek instance çalışır
-        private static AliSyntheticDataGenerator? _sharedInstance;
+        private static SyntheticDataGenerator? _sharedInstance;
         private static readonly object _lock = new object();
 
         // =====================================================
@@ -66,7 +66,7 @@ namespace BlockchainAnalysis.DataStructures
         // =====================================================
         // CONSTRUCTOR — Otomatik başlatma
         // =====================================================
-        public AliSyntheticDataGenerator(int hedefCuzdanSayisi = 20)
+        public SyntheticDataGenerator(int hedefCuzdanSayisi = 20)
         {
             // Cüzdan adresleri için kendi yazdığın DJB2 optimizeli hash fonksiyonunu bağlıyoruz
             _walletsHashTable = new HashTable<string, BatuhanWalletNode>(
@@ -83,7 +83,7 @@ namespace BlockchainAnalysis.DataStructures
         // =====================================================
         // SINGLETON ERİŞİMİ — Thread-safe
         // =====================================================
-        public static AliSyntheticDataGenerator Instance
+        public static SyntheticDataGenerator Instance
         {
             get
             {
@@ -92,7 +92,7 @@ namespace BlockchainAnalysis.DataStructures
                     lock (_lock)
                     {
                         if (_sharedInstance == null)
-                            _sharedInstance = new AliSyntheticDataGenerator();
+                            _sharedInstance = new SyntheticDataGenerator();
                     }
                 }
                 return _sharedInstance;
