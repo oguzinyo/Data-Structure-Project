@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewEncapsulation, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ChangeDetectorRef, NgZone, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { GraphEngineComponent, GraphData, HighlightedPath } from './graph-engine/graph-engine';
 import { BlockchainDataService } from './services/blockchain-data.service';
 import { BatuhanMerklePanelComponent } from './merkle-panel/merkle-panel';
@@ -25,9 +26,19 @@ export class App implements OnInit {
   transactionDetails: any = null;
   currentMerkleData: any = null;
 
-  constructor(private dataService: BlockchainDataService, private cdr: ChangeDetectorRef, private ngZone: NgZone) { }
+  private isBrowser: boolean;
+
+  constructor(
+    private dataService: BlockchainDataService,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
 
   ngOnInit() {
+    if (!this.isBrowser) return;
     this.loadGraphData();
     this.loadActivities();
   }
