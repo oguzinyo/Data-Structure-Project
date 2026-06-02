@@ -1,76 +1,64 @@
+**Blokzincir İşlem Ağları Analizi (Blockchain Analysis)**
 
-# Proje 4: Blokzincir İşlem Ağları - Yönlü Graf Altyapısı (Faz 1)
+Bu proje, blokzincir üzerindeki işlem (transaction) ağlarını, cüzdan bakiyelerini ve veri akışlarını analiz etmek için geliştirilmiş tam yığın (full-stack) bir web uygulamasıdır. Arka planda .NET 10.0 Web API, ön yüzde ise Angular 19 kullanılmaktadır. Tüm sistem Docker üzerinden izole bir şekilde çalışacak biçimde yapılandırılmıştır.
 
-Bu modül, blokzincir sistemlerindeki işlem verilerini sadeleştirilmiş bir graf modeli üzerinden incelemek amacıyla geliştirilmiştir. Projenin Faz 1 aşamasında, ağın temelini oluşturan yönlü graf veri yapısı ve cüzdan yönetim mekanizmaları kurulmuştur.
+**1. Sistem Gereksinimleri ve Ön Kurulumlar**
 
-## 🛠 Teknik Mimari ve Veri Yapıları
+Bilgisayarınız yepyeni ise, projeyi sorunsuz çalıştırabilmek için öncelikle altyapı gereksinimlerini kurmanız şarttır.
 
-Proje gereksinimleri doğrultusunda, sistemin yüksek performanslı ve güvenli çalışması için aşağıdaki yapılar tercih edilmiştir:
+* **Git Kurulumu:** Proje dosyalarını GitHub üzerinden indirmek için git-scm.com adresinden Git'i indirip standart ayarlarla kurun.
+* **WSL 2 Altyapısı:** Docker'ın Windows üzerinde çalışabilmesi için Linux çekirdeğine ihtiyacı vardır. Yönetici olarak bir PowerShell açıp aşağıdaki komutu çalıştırın ve işlem bitince bilgisayarınızı yeniden başlatın:
 
-### 1. BatuhanWalletNode (Cüzdan Düğümü)
-Ağdaki her bir benzersiz cüzdan adresini temsil eden **düğüm (vertex)** yapısıdır.
-* **Address (string):** Cüzdanın benzersiz kimliğidir. Blokzincir mantığına uygun olarak `private set` ile korunur ve değiştirilemez.
-* **Balance (double):** Cüzdanın güncel bakiyesini tutar. Sadeleştirilmiş model gereği transferler gerçekleştikçe dinamik olarak güncellenir.
+```powershell
+wsl --install
 
-### 2. BatuhanTransactionEdge (İşlem Kenarı)
-İki cüzdan arasındaki para transferini mühürleyen **yönlü kenar (edge)** yapısıdır.
-* **Yönlü Akış:** İşlem, gönderen (From) ve alıcı (To) düğümlerini referans alarak paranın akış yönünü tanımlar.
-* **Metadata:** Her işlem miktar (Amount) ve işlemin gerçekleştiği anı gösteren zaman damgası (Timestamp) bilgilerini taşır.
-* **Doğrulama:** Negatif miktarlı veya tanımsız düğümler arası transferleri engelleyen güvenlik kontrollerine sahiptir.
+```
 
-### 3. BlockchainGraph (Graf Yönetim Merkezi)
-Tüm ağın koordinasyonunu sağlayan ana sınıftır.
-* **Komşuluk Listesi (Adjacency List):** Bellek tasarrufu sağlamak amacıyla (Sparse Graph yapısı için) tercih edilmiştir.
-* **Thread-Safety (Eşzamanlılık):** `ConcurrentDictionary` ve `ConcurrentBag` koleksiyonları kullanılarak, çoklu iş parçacıklarının (thread) aynı anda veri yazması durumunda oluşabilecek çakışmalar (race conditions) önlenmiştir.
-* **Hızlı Erişim:** Cüzdan adresleri üzerinden yapılan sorgular, Hash Table mantığıyla ortalama **O(1)** sürede sonuçlanır.
+* **Docker Desktop Kurulumu:** [docker.com/products/docker-desktop](https://www.google.com/search?q=https://docker.com/products/docker-desktop) adresinden Docker Desktop'ı indirin. Kurulum ekranında "Use WSL 2 instead of Hyper-V" seçeneğinin işaretli olduğundan mutlaka emin olun. Kurulum bittiğinde programı başlatın ve sol alt köşedeki motor simgesinin yeşil (Engine is running) olmasını bekleyin. İlk açılışta çıkan lisans sözleşmelerini kabul edin.
 
-## 📈 Algoritmik Analiz (Big-O)
+**2. Projeyi Bilgisayara İndirme**
 
-Sistemin ölçeklenebilirliği için aşağıdaki karmaşıklık değerleri hedeflenmiştir:
+* Bilgisayarınızda projeyi saklamak istediğiniz klasöre gidin.
+* O dizinde boş bir yere sağ tıklayıp "Open in Terminal" (Terminalde Aç) seçeneğine tıklayın.
+* Aşağıdaki komut ile projeyi bilgisayarınıza klonlayın (Proje linkini kendi deponuza göre güncelleyebilirsiniz):
 
-| İşlem | Zaman Karmaşıklığı | Açıklama |
-| :--- | :--- | :--- |
-| **Cüzdan Ekleme** | $O(1)$ | Hash Table (Dictionary) kullanımı sayesinde doğrudan erişim. |
-| **İşlem (Kenar) Kaydı** | $O(1)$ | Gönderen cüzdanın komşuluk listesine doğrudan ekleme. |
-| **Cüzdan Bulma** | $O(1)$ | Benzersiz adres anahtarı ile hızlı sorgulama. |
-| **Hafıza Kullanımı** | $O(V + E)$ | Toplam düğüm (V) ve kenar (E) sayısıyla orantılı verimli alan kullanımı. |
+```bash
+git clone https://github.com/oguzinyo/data-structure-project.git
 
-## 🚀 Entegrasyon Notları
+```
 
-Bu altyapı, projenin sonraki fazlarında yer alan aşağıdaki görevler için temel oluşturur:
-* **Faz 2 (Algoritmalar):** BFS ve DFS algoritmaları, bu sınıftaki `AdjacencyList` üzerinden fon akışı analizi yapacaktır.
-* **Faz 3 (Görselleştirme):** Arayüz katmanı, düğüm boyutlarını ve kenar kalınlıklarını belirlemek için buradaki bakiye ve miktar verilerini okuyacaktır.
+* İndirme işlemi bitince terminal üzerinden projenin ana klasörüne geçiş yapın:
 
-## ✅ Karşılanan Proje Gereksinimleri ve Uygulama Yöntemi
-Bu modül kapsamında, proje föyünde belirtilen aşağıdaki kriterler başarıyla karşılanmıştır:
+```bash
+cd data-structure-project/Data-Structure-Project-integration-backend
 
-### B.1. Takım Çalışması ve Teknolojik Altyapı
+```
 
--   **Eşzamanlılık ve Mikroservis Yaklaşımı:** Yapay zeka motorunun ana bellekten bağımsız çalışabilmesi için `ConcurrentDictionary` ve `ConcurrentBag` kullanılarak **Thread-safe** bir altyapı kurulmuştur.
-    
--   **Versiyon Kontrolü (Git):** Doğrudan `main` dalına müdahale edilmeden, `feature-directed-graph` dalı üzerinden izole bir geliştirme süreci yürütülmüştür.
-    
+**3. Sistemi Ayağa Kaldırma**
 
-### B.3. Teslim Kuralları ve Değerlendirme
+Docker Desktop'ın arka planda açık ve çalışır durumda olduğundan emin olun. Proje dizininde açık olan terminalinize şu komutu yazarak sistemi sıfırdan derleyin ve başlatın:
 
--   **İsimlendirme Şartı:** Veritabanı ve fonksiyon isimlendirmelerinde (BatuhanWalletNode, BatuhanTransactionEdge, BlockchainGraph vb.) **Türkçe karakter içermeyen** ve global standartlara uygun bir format kullanılmıştır.
-    
+```bash
+docker compose up --build
 
-### Proje Konusu: Blokzincir İşlem Ağları Analizi
+```
 
--   **Yönlü Graf Modellemesi:** Cüzdan adresleri düğüm (vertex), para transferleri ise yönlü kenarlar (edge) olarak modellenmiştir.
-    
--   **Kenar Özellikleri:** Her transfer işlemi için miktar (amount) ve zaman (timestamp) bilgisi veri modeline dahil edilmiştir.
-    
--   **Döngü (Cycle) Desteği:** Sistem tasarımı, blokzincir ağlarında sık rastlanan döngüsel transferlere (A -> B -> A) izin verecek esnekliktedir.
-    
--   **Karma Tablo (Hash Table) Kullanımı:** Cüzdan adreslerine erişim süresini ortalama **O(1)** seviyesine çekmek için Hash Table tabanlı `ConcurrentDictionary` yapısı entegre edilmiştir.
-    
--   **Bakiye Hesaplama:** Sadeleştirilmiş model gereği, işlem anında gönderen ve alıcı bakiyeleri otomatik olarak güncellenecek şekilde kodlanmıştır.
-    
+Bu işlem bilgisayarınızın hızına ve internet bağlantınıza bağlı olarak birkaç dakika sürebilir. Terminal ekranında Angular'ın ve .NET'in çalıştığını belirten loglar (örneğin "Node Express server listening on http://localhost:4000") akmaya başladığında sistem hazır demektir. **Önemli:** Bu terminal penceresini çarpıdan kapatmayın, açık kaldığı sürece projeniz yayında kalır.
 
-### Raporlama ve Analiz
+**4. Uygulamayı Kullanma**
 
--   **Big-O Analizi:** Tasarlanan veri yapılarının zaman ve uzay karmaşıklığı analizleri teknik dökümantasyona eklenmiştir.
----
-*Bu döküman, iş bölümünde Faz 1'in Yönlü Graf kısmından sorumlu olan Batuhan Özdemir'in sorumlulukları kapsamında hazırlanan kodların teknik dökümantasyonudur.*
+Sistem çalışır duruma geldikten sonra herhangi bir web tarayıcısını açarak uygulamaya erişebilirsiniz.
+
+* **Kullanıcı Arayüzü (Frontend):** Projenin görsel arayüzüne ve graflara ulaşmak için tarayıcınızın adres çubuğuna **http://localhost:4000** yazın.
+* **API Dokümantasyonu (Backend):** Arka planda çalışan servislerin uç noktalarını (endpoint) görmek veya test etmek isterseniz **http://localhost:5050/scalar/v1** adresine gidebilirsiniz.
+
+**5. Sistemi Durdurma**
+
+Projeyle işiniz bittiğinde sunucuları kapatmak için logların aktığı terminal ekranına tıklayıp klavyenizden **Ctrl + C** tuşlarına basın.
+
+Konteynerleri ve ağ yapılandırmalarını sistemden tamamen temizlemek isterseniz aynı proje dizininde şu komutu çalıştırabilirsiniz:
+
+```bash
+docker compose down
+
+```
