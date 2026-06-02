@@ -5,8 +5,10 @@ services:
       dockerfile: Dockerfile
     container_name: ummet_backend_service
     restart: unless-stopped
-    stdin_open: true  # <--- Dışarıdan giriş (Enter vb.) beklemesini sağlar
-    tty: true         # <--- Sanal bir terminal bağlayarak kapanmasını engeller
+    ports:
+      - "5050:5050"
+    stdin_open: true
+    tty: true
     networks:
       - ummet_blockchain_net
 
