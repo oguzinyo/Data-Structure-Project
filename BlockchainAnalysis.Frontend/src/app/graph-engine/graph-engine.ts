@@ -32,6 +32,7 @@ export interface TransactionEdge {
   source: string | WalletNode;
   target: string | WalletNode;
   amount: number;
+  fee?: number;
   timestamp: string;
 }
 
@@ -121,6 +122,7 @@ export class GraphEngineComponent implements AfterViewInit, OnChanges, OnDestroy
 
   @Output() nodeClicked = new EventEmitter<any>();
   @Output() edgeClicked = new EventEmitter<any>();
+  @Output() selectionCleared = new EventEmitter<void>();
 
   tooltip: { x: number; y: number; lines: string[] } | null = null;
   selectedEdge: TransactionEdge | null = null;
@@ -154,6 +156,12 @@ export class GraphEngineComponent implements AfterViewInit, OnChanges, OnDestroy
   isSender(tx: TransactionEdge): boolean {
     const src = typeof tx.source === 'object' ? (tx.source as WalletNode).id : tx.source;
     return src === this.selectedNode?.id;
+  }
+
+  onTxRowClicked(tx: TransactionEdge): void {
+    this.selectedEdge = tx;
+    this.cdr.detectChanges();
+    this.edgeClicked.emit(tx);
   }
   getNodeId(node: string | WalletNode): string {
     return typeof node === 'object' ? node.id : node;
@@ -190,6 +198,7 @@ export class GraphEngineComponent implements AfterViewInit, OnChanges, OnDestroy
     this.selectedEdge = null;
     this.selectedNode = null;
     this.cdr.detectChanges();
+    this.selectionCleared.emit();
   }
 
   private renderGraph(): void {
