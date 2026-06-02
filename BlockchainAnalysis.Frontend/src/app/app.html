@@ -1,9 +1,11 @@
 <div class="dashboard-wrapper">
 
-    <app-graph-engine 
+    <app-graph-engine
+        [graphData]="graphData"
         [highlightedPath]="MehmetHighlight"
         (nodeClicked)="BatuhanOnNodeClicked($event)"
         (edgeClicked)="BatuhanOnEdgeClicked($event)"
+        (selectionCleared)="onSelectionCleared()"
         class="graph-background">
     </app-graph-engine>
 
@@ -51,7 +53,7 @@
                     <span class="dots">...</span>
                 </div>
                 <div class="activity-list">
-                    @for (activity of recentActivities; track activity.time) {
+                    @for (activity of recentActivities; track $index) {
                     <div class="activity-item">
                         <div class="icon-box" [class.btc]="activity.type === 'btc'" [class.eth]="activity.type === 'eth'">{{ activity.symbol }}</div>
                         <div class="activity-details">
@@ -80,8 +82,10 @@
     <span class="j-key">"status"</span>: <span class="j-str">"{{ transactionDetails.status }}"</span>,
     <span class="j-key">"data"</span>: &#123;
         <span class="j-key">"amount"</span>: <span class="j-str">"{{ transactionDetails.data?.amount }}"</span>,
-        <span class="j-key">"volume"</span>: <span class="j-str">"{{ transactionDetails.data?.volume }}"</span>,
-        <span class="j-key">"validator"</span>: <span class="j-str">"{{ transactionDetails.data?.validator }}"</span>
+        <span class="j-key">"fee"</span>: <span class="j-str">"{{ transactionDetails.data?.fee }}"</span>,
+        <span class="j-key">"source"</span>: <span class="j-str">"{{ transactionDetails.data?.source }}"</span>,
+        <span class="j-key">"target"</span>: <span class="j-str">"{{ transactionDetails.data?.target }}"</span>,
+        <span class="j-key">"timestamp"</span>: <span class="j-str">"{{ transactionDetails.data?.timestamp }}"</span>
     &#125;
 &#125;
                 </pre>

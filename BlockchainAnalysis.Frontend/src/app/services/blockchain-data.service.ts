@@ -1,97 +1,109 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
+
+const API_BASE = 'http://localhost:5050/api';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BlockchainDataService {
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
+
+  BatuhanGetGraphData(): Observable<any> {
+    return this.http.get<any>(`${API_BASE}/graph`).pipe(
+      catchError(err => {
+        console.error('Graf verisi alinamadi:', err);
+        return of({ nodes: [], edges: [] });
+      })
+    );
+  }
 
   BatuhanGetRecentActivities(): Observable<any[]> {
-    const mockActivities = [
-      { type: 'btc', symbol: '₿', amount: '1,620,828.38', currency: 'USD', asset: 'BTC', time: '15:33 ago' },
-      { type: 'eth', symbol: 'Ξ', amount: '4,90,685.33', currency: 'USD', asset: 'ETH', time: '15:32 ago' }
-    ];
-    return of(mockActivities).pipe(delay(500));
+    return this.http.get<any[]>(`${API_BASE}/graph/edges`).pipe(
+      map(edges => {
+        return edges.slice(0, 5).map((e: any) => ({
+          type: 'btc',
+          symbol: '₿',
+          amount: e.amount.toLocaleString('en-US', { minimumFractionDigits: 2 }),
+          currency: 'BTC',
+          asset: 'BTC',
+          time: new Date(e.timestamp).toLocaleTimeString('tr-TR')
+        }));
+      }),
+      catchError(() => of([]))
+    );
   }
 
   BatuhanGetTransactionDetails(txId: string): Observable<any> {
-    const mockTxDetail = {
-      name: "transaction",
-      address: txId,
-      status: "valid",
-      data: {
-        amount: Math.floor(Math.random() * 5000) + " BTC",
-        volume: Math.floor(Math.random() * 1000) + " GC",
-        validator: "Node-" + Math.floor(Math.random() * 9999999)
-      }
-    };
-    return of(mockTxDetail).pipe(delay(300));
+    return this.http.get<any[]>(`${API_BASE}/graph/edges`).pipe(
+      map(edges => {
+        const tx = edges.find((e: any) => e.id === txId);
+        if (!tx) return { name: "transaction", address: txId, status: "not_found", data: {} };
+        return {
+          name: "transaction",
+          address: tx.id,
+          status: "valid",
+          data: {
+            amount: tx.amount + " BTC",
+            fee: tx.fee + " BTC",
+            source: tx.source,
+            target: tx.target,
+            timestamp: new Date(tx.timestamp).toLocaleString('tr-TR')
+          }
+        };
+      }),
+      catchError(() => of({ name: "transaction", address: txId, status: "error", data: {} }))
+    );
   }
 
   BatuhanGetMerkleTreeData(txId: string): Observable<any> {
-    const allTxs = [
-      'tx001', 'tx002', 'tx003', 'tx004', 'tx005', 'tx006', 'tx007',
-      'tx008', 'tx009', 'tx010', 'tx011', 'tx012', 'tx013'
-    ];
+    return this.http.get<any>(`${API_BASE}/merkle/tree`, {
+      params: { transactionId: txId }
+    }).pipe(
+      catchError(() => of(null))
+    );
+  }
 
-    const paddedLength = 16;
-    const baseTxs = [...allTxs];
-    while (baseTxs.length < paddedLength) {
-      baseTxs.push(baseTxs[baseTxs.length - 1]);
-    }
+  BatuhanGetForwardFlow(startAddress: string, minAmount?: number): Observable<any> {
+    const params: any = { startAddress };
+    if (minAmount) params.minAmount = minAmount;
+    return this.http.get<any>(`${API_BASE}/analysis/flow`, { params }).pipe(
+      catchError(() => of({ bfsOrder: [], dfsOrder: [], flowEdges: [] }))
+    );
+  }
 
-    const getHash = (id: string) => "0x" + id.toUpperCase() + "F";
+  BatuhanGetBackwardFlow(startAddress: string): Observable<any> {
+    return this.http.get<any>(`${API_BASE}/analysis/flow/backward`, {
+      params: { startAddress }
+    }).pipe(
+      catchError(() => of({ flowEdges: [] }))
+    );
+  }
 
-    // TİP HATASI BURADA ÇÖZÜLDÜ: Değişkene açıkça ': any[]' tipi atandı
-    let currentLevel: any[] = baseTxs.map((id, index) => {
-      const isTarget = id === txId && allTxs.indexOf(id) === index;
-      return {
-        hash: getHash(id),
-        label: id,
-        state: isTarget ? 'target' : 'default'
-      };
-    });
+  MehmetFindPath(startAddress: string, targetAddress: string): Observable<any> {
+    return this.http.get<any>(`${API_BASE}/analysis/path`, {
+      params: { startAddress, targetAddress }
+    }).pipe(
+      catchError(() => of({ path: [], found: false }))
+    );
+  }
 
-    let levelCount = 1;
-    while (currentLevel.length > 1) {
-      // TİP HATASI BURADA ÇÖZÜLDÜ: Ara katman dizisine de ': any[]' atandı
-      const nextLevel: any[] = [];
+  MehmetFindMaxCapacityPath(startAddress: string, targetAddress: string): Observable<any> {
+    return this.http.get<any>(`${API_BASE}/analysis/path/max-capacity`, {
+      params: { startAddress, targetAddress }
+    }).pipe(
+      catchError(() => of({ path: [], found: false }))
+    );
+  }
 
-      for (let i = 0; i < currentLevel.length; i += 2) {
-        const left = currentLevel[i];
-        const right = currentLevel[i + 1];
-
-        let state = 'default';
-
-        if (left.state === 'target' || right.state === 'target' || left.state === 'computed' || right.state === 'computed') {
-          state = 'computed';
-          if (left.state === 'default') left.state = 'proof';
-          if (right.state === 'default') right.state = 'proof';
-        }
-
-        nextLevel.push({
-          hash: "0xL" + levelCount + "_" + (i * 7 + 12).toString(16).toUpperCase(),
-          state: state,
-          left: left,
-          right: right
-        });
-      }
-
-      currentLevel = nextLevel;
-      levelCount++;
-    }
-
-    const rootNode = currentLevel[0];
-    rootNode.state = 'root';
-    rootNode.hash = "0xROOT_MAIN";
-
-    return of({
-      isValid: true,
-      rootHash: rootNode.hash,
-      rootNode: rootNode
-    }).pipe(delay(200));
+  BatuhanGetDynamicBalance(walletAddress: string): Observable<any> {
+    return this.http.get<any>(`${API_BASE}/analysis/balance`, {
+      params: { walletAddress }
+    }).pipe(
+      catchError(() => of({ dynamicBalance: 0 }))
+    );
   }
 }

@@ -169,6 +169,18 @@
   border-bottom: 1px solid #1a2d4a;
 }
 
+.tx-clickable {
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 8px 6px;
+  transition: background 0.15s ease;
+}
+
+.tx-clickable:hover {
+  background: rgba(45, 212, 191, 0.1);
+  border-color: #2dd4bf;
+}
+
   .tx-row:last-child {
     border-bottom: none;
   }
