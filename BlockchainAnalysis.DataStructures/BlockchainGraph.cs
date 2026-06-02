@@ -66,7 +66,7 @@ public IReadOnlyList<BatuhanTransactionEdge> BatuhanGetOutgoingEdges(string addr
     {
         var order = new List<string>();
         var visited = new HashTable<string, bool>(hashFunc: WalletHashFunctions.HashFNV1a);
-        var queue = new CustomQueue<string>();
+        var queue = new UmmetQueue<string>();
 
         if (!_nodes.ContainsKey(startAddress))
         {
@@ -98,7 +98,7 @@ public IReadOnlyList<BatuhanTransactionEdge> BatuhanGetOutgoingEdges(string addr
     {
         var order = new List<string>();
         var visited = new HashTable<string, bool>(hashFunc: WalletHashFunctions.HashFNV1a);
-        var stack = new CustomStack<string>();
+        var stack = new UmmetStack<string>();
 
         if (!_nodes.ContainsKey(startAddress))
         {
@@ -168,7 +168,7 @@ public IReadOnlyList<BatuhanTransactionEdge> BatuhanGetOutgoingEdges(string addr
         var flowEdges = new List<BatuhanTransactionEdge>();
         // Blokzincirdeki döngüleri (A -> B -> A) kırmak için ID bazlı takip
         var visitedEdges = new HashTable<string, bool>(16, WalletHashFunctions.HashFNV1a);
-        var queue = new CustomQueue<string>();
+        var queue = new UmmetQueue<string>();
 
         if (!_nodes.ContainsKey(startAddress))
         {
@@ -200,7 +200,7 @@ public IReadOnlyList<BatuhanTransactionEdge> BatuhanGetOutgoingEdges(string addr
     {
         var flowEdges = new List<BatuhanTransactionEdge>();
         var visitedEdges = new HashTable<string, bool>(16, WalletHashFunctions.HashFNV1a);
-        var queue = new CustomQueue<string>();
+        var queue = new UmmetQueue<string>();
 
         if (!_nodes.ContainsKey(startAddress))
         {
@@ -232,7 +232,7 @@ public IReadOnlyList<BatuhanTransactionEdge> BatuhanGetOutgoingEdges(string addr
     {
         var path = new List<string>();
         var parentMap = new HashTable<string, string>(hashFunc: WalletHashFunctions.HashFNV1a);
-        var queue = new CustomQueue<string>();
+        var queue = new UmmetQueue<string>();
 
         if (!_nodes.ContainsKey(startAddress) || !_nodes.ContainsKey(targetAddress))
             return path;
