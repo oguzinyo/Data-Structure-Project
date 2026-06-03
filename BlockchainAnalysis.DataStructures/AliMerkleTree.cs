@@ -6,13 +6,13 @@ using System.Text;
 
 namespace BlockchainAnalysis.DataStructures;
 
-public class MerkleNode
+public class AliMerkleNode
 {
     public string Hash { get; set; }
-    public MerkleNode? Left { get; set; }
-    public MerkleNode? Right { get; set; }
+    public AliMerkleNode? Left { get; set; }
+    public AliMerkleNode? Right { get; set; }
 
-    public MerkleNode(string hash, MerkleNode? left = null, MerkleNode? right = null)
+    public AliMerkleNode(string hash, AliMerkleNode? left = null, AliMerkleNode? right = null)
     {
         Hash = hash;
         Left = left;
@@ -20,9 +20,9 @@ public class MerkleNode
     }
 }
 
-public class MerkleTree
+public class AliMerkleTree
 {
-    public MerkleNode? Root { get; private set; }
+    public AliMerkleNode? Root { get; private set; }
 
     public string Build(IReadOnlyList<string> transactionPayloads)
     {
@@ -32,22 +32,22 @@ public class MerkleTree
             return string.Empty;
         }
 
-        var currentLevel = new List<MerkleNode>();
+        var currentLevel = new List<AliMerkleNode>();
         foreach (var payload in transactionPayloads)
         {
-            currentLevel.Add(new MerkleNode(ComputeHash(payload)));
+            currentLevel.Add(new AliMerkleNode(ComputeHash(payload)));
         }
 
         while (currentLevel.Count > 1)
         {
-            var nextLevel = new List<MerkleNode>();
+            var nextLevel = new List<AliMerkleNode>();
 
             for (int i = 0; i < currentLevel.Count; i += 2)
             {
                 var left = currentLevel[i];
                 var right = i + 1 < currentLevel.Count ? currentLevel[i + 1] : currentLevel[i];
                 var combinedHash = ComputeHash(left.Hash + right.Hash);
-                nextLevel.Add(new MerkleNode(combinedHash, left, right));
+                nextLevel.Add(new AliMerkleNode(combinedHash, left, right));
             }
 
             currentLevel = nextLevel;
