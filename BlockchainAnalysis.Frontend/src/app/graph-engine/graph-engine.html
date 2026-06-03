@@ -59,9 +59,9 @@
         </div>
     
         @if (selectedNodeTxs.length > 0) {
-          <div class="tx-title">▸ İŞLEM GEÇMİŞİ ({{ selectedNodeTxs.length }})</div>
+          <div class="tx-title">▸ İŞLEM GEÇMİŞİ ({{ selectedNodeTxs.length }}) <small style="color:#64748b; font-weight:normal;">— tıkla → Merkle doğrulama</small></div>
           @for (tx of selectedNodeTxs; track tx.id) {
-            <div class="tx-row">
+            <div class="tx-row tx-clickable" (click)="onTxRowClicked(tx)">
               <div class="tx-id">{{ tx.id }}</div>
               <div class="tx-detail">
                 <span class="tx-amount">{{ tx.amount }} ₿</span>

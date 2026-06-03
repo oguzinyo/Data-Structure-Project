@@ -1,31 +1,58 @@
-<div class="merkle-container" [class.valid]="treeData.isValid" [class.invalid]="!treeData.isValid">
-  <h2>Merkle Ağacı Analizi</h2>
-  <p>Durum: <strong>{{ treeData.isValid ? 'Doğrulandı (Bütünlük Sağlam)' : 'HATA! (Veri Manipülasyonu)' }}</strong></p>
+<div #merkleContainer class="merkle-container" [class.fullscreen-mode]="isFullscreen">
 
-  <div class="tree-wrapper">
-    <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: treeData.rootNode }"></ng-container>
+  <div class="merkle-header">
+    <div class="proof-status" [class.valid]="treeData.isValid">
+      <span class="indicator"></span>
+      Merkle Proof: {{ treeData.isValid ? 'Doğrulandı' : 'Geçersiz' }}
+    </div>
+
+    <div class="zoom-controls">
+      <button class="zoom-btn action-btn" (click)="BatuhanToggleFullscreen()" title="Görünümü Değiştir">
+        {{ isFullscreen ? '🗗 Küçült' : '🗖 Tam Ekran' }}
+      </button>
+      <div class="separator"></div>
+      <button class="zoom-btn" (click)="BatuhanZoomOut()" title="Uzaklaştır">−</button>
+      <span class="zoom-level">{{ (zoomScale * 100).toFixed(0) }}%</span>
+      <button class="zoom-btn" (click)="BatuhanZoomIn()" title="Yakınlaştır">+</button>
+      <button class="zoom-btn reset-btn" (click)="BatuhanResetZoom()" title="Sıfırla">⟲</button>
+    </div>
+  </div>
+
+  <div class="tree-viewport" (mousedown)="BatuhanOnMouseDown($event)">
+    <div class="tree-wrapper" [style.transform]="'translate(' + translateX + 'px, ' + translateY + 'px) scale(' + zoomScale + ')'">
+      @if (treeData.rootNode) {
+      <ng-container *ngTemplateOutlet="drawNode; context: { $implicit: treeData.rootNode }"></ng-container>
+      }
+    </div>
   </div>
 </div>
 
-<ng-template #nodeTemplate let-node>
-  <div class="tree-node-container" *ngIf="node">
+<ng-template #drawNode let-node>
+  <div class="tree-node-group">
 
-    <div class="node-box" [title]="node.hash">
-      <span class="hash-text">{{ node.hash | slice:0:8 }}...</span>
-      <span class="data-text" *ngIf="node.data">{{ node.data }}</span>
+    <div class="m-node" [ngClass]="node.state || 'default'">
+      <span class="m-hash">{{ node.hash }}</span>
+      @if (node.label) {
+      <span class="m-label">{{ node.label }}</span>
+      }
     </div>
 
-    <div class="children-container" *ngIf="node.left || node.right">
-      <div class="child-wrapper" *ngIf="node.left">
-        <div class="connector-line left-line"></div>
-        <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: node.left }"></ng-container>
-      </div>
+    @if (node.left || node.right) {
+    <div class="tree-branches">
 
-      <div class="child-wrapper" *ngIf="node.right">
-        <div class="connector-line right-line"></div>
-        <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: node.right }"></ng-container>
+      @if (node.left) {
+      <div class="branch left-branch">
+        <ng-container *ngTemplateOutlet="drawNode; context: { $implicit: node.left }"></ng-container>
       </div>
+      }
+
+      @if (node.right) {
+      <div class="branch right-branch">
+        <ng-container *ngTemplateOutlet="drawNode; context: { $implicit: node.right }"></ng-container>
+      </div>
+      }
+
     </div>
-
+    }
   </div>
 </ng-template>

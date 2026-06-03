@@ -7,7 +7,7 @@ namespace BlockchainAnalysis.Core
 {
     public interface IHashTable
     {
-        void Insert(string address, BatuhanWalletNode wallet);
-        BatuhanWalletNode Get(string address);
+        void Insert(string address, WalletNode wallet);
+        WalletNode Get(string address);
     }
 }
