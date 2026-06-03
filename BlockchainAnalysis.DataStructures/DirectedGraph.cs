@@ -7,21 +7,21 @@ namespace BlockchainAnalysis.DataStructures;
 
 public class DirectedGraph : IGraph
 {
-    private readonly HashTable<string, BatuhanWalletNode> _wallets = new(hashFunc: WalletHashFunctions.HashFNV1a);
-    private readonly HashTable<string, List<BatuhanTransactionEdge>> _adjacency = new(hashFunc: WalletHashFunctions.HashFNV1a);
+    private readonly HashTable<string, WalletNode> _wallets = new(hashFunc: WalletHashFunctions.HashFNV1a);
+    private readonly HashTable<string, List<TransactionEdge>> _adjacency = new(hashFunc: WalletHashFunctions.HashFNV1a);
     private readonly List<string> _addresses = new();
 
-    public void BatuhanAddVertex(BatuhanWalletNode wallet)
+    public void BatuhanAddVertex(WalletNode wallet)
     {
         if (!_wallets.ContainsKey(wallet.Address))
         {
             _wallets.Add(wallet.Address, wallet);
-            _adjacency.Add(wallet.Address, new List<BatuhanTransactionEdge>());
+            _adjacency.Add(wallet.Address, new List<TransactionEdge>());
             _addresses.Add(wallet.Address);
         }
     }
 
-    public void BatuhanAddEdge(BatuhanTransactionEdge transaction)
+    public void BatuhanAddEdge(TransactionEdge transaction)
     {
         BatuhanAddVertexIfMissing(transaction.FromAddress);
         BatuhanAddVertexIfMissing(transaction.ToAddress);
@@ -42,11 +42,11 @@ public class DirectedGraph : IGraph
 
     public IReadOnlyList<string> BatuhanGetAddresses() => _addresses;
 
-    public IReadOnlyList<BatuhanTransactionEdge> BatuhanGetOutgoingTransactions(string address)
+    public IReadOnlyList<TransactionEdge> BatuhanGetOutgoingTransactions(string address)
     {
         if (!_adjacency.TryGetValue(address, out var transactions))
         {
-            return Array.Empty<BatuhanTransactionEdge>();
+            return Array.Empty<TransactionEdge>();
         }
 
         return transactions;
@@ -162,14 +162,14 @@ public class DirectedGraph : IGraph
     {
         if (!_wallets.ContainsKey(address))
         {
-            BatuhanAddVertex(new BatuhanWalletNode(address));
+            BatuhanAddVertex(new WalletNode(address));
         }
     }
 
     // 1. Geriye Dönük Akış İçin Gelen Kenarları Bulma Metodu
-    public IReadOnlyList<BatuhanTransactionEdge> BatuhanGetIncomingEdges(string address)
+    public IReadOnlyList<TransactionEdge> BatuhanGetIncomingEdges(string address)
     {
-        var incomingEdges = new List<BatuhanTransactionEdge>();
+        var incomingEdges = new List<TransactionEdge>();
         foreach (var walletAddress in _addresses)
         {
             foreach (var edge in BatuhanGetOutgoingTransactions(walletAddress))
@@ -183,9 +183,9 @@ public class DirectedGraph : IGraph
         return incomingEdges;
     }
 
-    public List<BatuhanTransactionEdge> BatuhanGetForwardFundFlow(string startAddress)
+    public List<TransactionEdge> BatuhanGetForwardFundFlow(string startAddress)
     {
-        var flowEdges = new List<BatuhanTransactionEdge>();
+        var flowEdges = new List<TransactionEdge>();
         var visitedEdges = new HashTable<string, bool>(16, WalletHashFunctions.HashFNV1a);
         var queue = new UmmetQueue<string>();
 
@@ -208,9 +208,9 @@ public class DirectedGraph : IGraph
         return flowEdges;
     }
 
-    public List<BatuhanTransactionEdge> BatuhanGetBackwardFundFlow(string startAddress)
+    public List<TransactionEdge> BatuhanGetBackwardFundFlow(string startAddress)
     {
-        var flowEdges = new List<BatuhanTransactionEdge>();
+        var flowEdges = new List<TransactionEdge>();
         var visitedEdges = new HashTable<string, bool>(16, WalletHashFunctions.HashFNV1a);
         var queue = new UmmetQueue<string>();
 
@@ -233,7 +233,7 @@ public class DirectedGraph : IGraph
         return flowEdges;
     }
     
-    public IReadOnlyList<BatuhanTransactionEdge> BatuhanGetOutgoingEdges(string address)
+    public IReadOnlyList<TransactionEdge> BatuhanGetOutgoingEdges(string address)
     {
         return BatuhanGetOutgoingTransactions(address);
     }

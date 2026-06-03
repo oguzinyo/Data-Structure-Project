@@ -11,7 +11,7 @@ public class BlockchainService
     private readonly AliSyntheticDataGenerator _dataGenerator;
     private readonly FundFlowTracker _flowTracker;
     private readonly UmmetDynamicBalanceEngine _balanceEngine;
-    private readonly List<BatuhanTransactionEdge> _allTransactions;
+    private readonly List<TransactionEdge> _allTransactions;
 
     public BlockchainService()
     {
@@ -219,7 +219,7 @@ public class BlockchainService
         return _allTransactions.Select(tx => tx.TransactionId).ToList();
     }
 
-    private TransactionEdgeDto MapEdgeToDto(BatuhanTransactionEdge edge)
+    private TransactionEdgeDto MapEdgeToDto(TransactionEdge edge)
     {
         return new TransactionEdgeDto
         {
