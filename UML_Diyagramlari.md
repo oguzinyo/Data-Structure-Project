@@ -86,8 +86,8 @@ classDiagram
         +IsEmpty: bool
     }
 
-    class AliMerkleTree {
-        +Root: AliMerkleNode
+    class MerkleTree {
+        +Root: MerkleNode
         +Build(payloads) string
         +Verify(payloads, expectedRoot) bool
         +ComputeHash(value) string
@@ -105,7 +105,7 @@ classDiagram
         +UmmetCalculateDynamicBalance(walletAddress) decimal
     }
 
-    class AliSyntheticDataGenerator {
+    class SyntheticDataGenerator {
         -_random: Random
         -_walletsHashTable: HashTable
         -_transactionsHashTable: HashTable
@@ -125,10 +125,10 @@ classDiagram
     TransactionEdge --> WalletNode : From/To
     FundFlowTracker --> IGraph : depends on
     UmmetDynamicBalanceEngine --> IGraph : depends on
-    AliMerkleTree --> AliMerkleNode : builds
-    AliSyntheticDataGenerator --> HashTable : uses
-    AliSyntheticDataGenerator --> WalletNode : generates
-    AliSyntheticDataGenerator --> TransactionEdge : generates
+    MerkleTree --> MerkleNode : builds
+    SyntheticDataGenerator --> HashTable : uses
+    SyntheticDataGenerator --> WalletNode : generates
+    SyntheticDataGenerator --> TransactionEdge : generates
 ```
 
 ---
@@ -203,7 +203,7 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant Client
-    participant MT as AliMerkleTree
+    participant MT as MerkleTree
     participant SHA as SHA-256
 
     Client->>MT: Build([tx1, tx2, tx3, tx4])

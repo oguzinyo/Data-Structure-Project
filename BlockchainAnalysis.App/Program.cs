@@ -9,9 +9,11 @@ namespace BlockchainAnalysis.App
 {
     class Program
     {
+       
         static void Main(string[] args)
         {
-            /*
+             /*
+            
             Console.WriteLine("============================================================");
             Console.WriteLine(" BLOKZINCIR ISLEM AGLARI ANALIZI - FAZ 1 DEMO");
             Console.WriteLine("============================================================");
@@ -116,23 +118,23 @@ namespace BlockchainAnalysis.App
                 payloads.Add(payload);
 
                 // Kendi yazdığın ComputeHash metodu ile SHA256 hesabı
-                string hash = AliMerkleTree.ComputeHash(payload);
+                string hash = MerkleTree.AliComputeHash(payload);
                 Console.WriteLine($"Tx Hash {i + 1}: {hash.Substring(0, 16)}...");
             }
 
             // Ağacı inşa et ve kökü al
-            var merkleTree = new AliMerkleTree();
+            var merkleTree = new MerkleTree();
             string rootHash = merkleTree.Build(payloads);
             Console.WriteLine($"Merkle Root: {rootHash.Substring(0, 24)}...");
 
             // Kendi Verify metotların ile verileri doğrulama
-            bool isValid = merkleTree.Verify(payloads, rootHash);
+            bool isValid = merkleTree.AliVerify(payloads, rootHash);
             Console.WriteLine($"Dogrulama sonucu: {isValid}");
 
             // Verinin manipüle edilmesi ve reddedilmesi simülasyonu
             var tamperedPayloads = new List<string>(payloads);
             tamperedPayloads[0] = "SAHTE_ISLEM_VERISI_12345";
-            bool isTamperedValid = merkleTree.Verify(tamperedPayloads, rootHash);
+            bool isTamperedValid = merkleTree.AliVerify(tamperedPayloads, rootHash);
             Console.WriteLine($"Degistirilmis veri dogrulama sonucu: {isTamperedValid}");
             Console.WriteLine();
 

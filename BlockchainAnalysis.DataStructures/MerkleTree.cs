@@ -6,13 +6,13 @@ using System.Text;
 
 namespace BlockchainAnalysis.DataStructures;
 
-public class AliMerkleNode
+public class MerkleNode
 {
     public string Hash { get; set; }
-    public AliMerkleNode? Left { get; set; }
-    public AliMerkleNode? Right { get; set; }
+    public MerkleNode? Left { get; set; }
+    public MerkleNode? Right { get; set; }
 
-    public AliMerkleNode(string hash, AliMerkleNode? left = null, AliMerkleNode? right = null)
+    public MerkleNode(string hash, MerkleNode? left = null, MerkleNode? right = null)
     {
         Hash = hash;
         Left = left;
@@ -20,9 +20,9 @@ public class AliMerkleNode
     }
 }
 
-public class AliMerkleTree
+public class MerkleTree
 {
-    public AliMerkleNode? Root { get; private set; }
+    public MerkleNode? Root { get; private set; }
 
     public string Build(IReadOnlyList<string> transactionPayloads)
     {
@@ -32,22 +32,22 @@ public class AliMerkleTree
             return string.Empty;
         }
 
-        var currentLevel = new List<AliMerkleNode>();
+        var currentLevel = new List<MerkleNode>();
         foreach (var payload in transactionPayloads)
         {
-            currentLevel.Add(new AliMerkleNode(ComputeHash(payload)));
+            currentLevel.Add(new MerkleNode(AliComputeHash(payload)));
         }
 
         while (currentLevel.Count > 1)
         {
-            var nextLevel = new List<AliMerkleNode>();
+            var nextLevel = new List<MerkleNode>();
 
             for (int i = 0; i < currentLevel.Count; i += 2)
             {
                 var left = currentLevel[i];
                 var right = i + 1 < currentLevel.Count ? currentLevel[i + 1] : currentLevel[i];
-                var combinedHash = ComputeHash(left.Hash + right.Hash);
-                nextLevel.Add(new AliMerkleNode(combinedHash, left, right));
+                var combinedHash = AliComputeHash(left.Hash + right.Hash);
+                nextLevel.Add(new MerkleNode(combinedHash, left, right));
             }
 
             currentLevel = nextLevel;
@@ -57,12 +57,12 @@ public class AliMerkleTree
         return Root.Hash;
     }
 
-    public bool Verify(IReadOnlyList<string> transactionPayloads, string expectedRoot)
+    public bool AliVerify(IReadOnlyList<string> transactionPayloads, string expectedRoot)
     {
         return Build(transactionPayloads) == expectedRoot;
     }
 
-    public static string ComputeHash(string value)
+    public static string AliComputeHash(string value)
     {
         var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(value));
         var builder = new StringBuilder(bytes.Length * 2);
