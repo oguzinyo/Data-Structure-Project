@@ -1,3 +1,24 @@
+# Proje Görev Dağılımı ve Teslimat Tablosu
+
+| Faz | Sorumlu Kişi | Görev / Rol Tanımı | Ana Teslimat ve Sorumluluk |
+| :--- | :--- | :--- | :--- |
+| Faz 1 | Batuhan Özdemir | Yönlü Graf (Directed Graph) İskeleti | Graf iskeletini oluşturmak, düğüm (Node) ve kenar (Edge) sınıflarını basit nesne referanslarıyla birbirine bağlamak. |
+| Faz 1 | Ali Kadir Özyaşar | Merkle Ağacı (Hash Tree) | İşlem verilerini ikili ağaç mantığıyla bağlamak, özyinelemeli hash hesaplamak ve veri bütünlüğü doğrulama algoritması kurmak. |
+| Faz 1 | Oğuzhan Hekimoğlu | Karma Tablo (Hash Table) | O(1) erişim süresi için manuel hash fonksiyonu tasarlamak ve çakışma (collision) yönetimi geliştirmek. |
+| Faz 1 | Ümmet Erkan | Kuyruk ve Yığıt (Queue & Stack) | Standart yığıt (push/pop) ve kuyruk (enqueue/dequeue) sınıflarını giriş seviyesinde kodlamak. |
+| Faz 1 | M. Oğuzhan Tanrıverdi | Mimari ve DevOps | Docker konfigürasyonlarını, GitHub PR ayarlarını ve proje README dosyasını hazırlamak. |
+| Faz 2 | Batuhan Özdemir | Fon Akışı İzleme ve Çekirdek Algoritma | Belirli bir cüzdan adresi girildiğinde fon akış geçmişini geriye/ileriye dönük kronolojik listeleyen filtreleme metotları. |
+| Faz 2 | M. Oğuzhan Tanrıverdi | Hedef Düğüm Analisti ve Alternatif Yol | Hedef adres analizi metotları ve graf üzerinde alternatif yol bulma (Maksimum Kapasite Yolu) fonksiyonları. |
+| Faz 2 | Ümmet Erkan | Dinamik Bakiye Motoru ve Eşzamanlılık | Thread-safe bakiye hesaplama, kilit mekanizmaları (lock) ve dinamik güncelleme motoru. |
+| Faz 2 | Ali Kadir Özyaşar | Sentetik Veri Üreticisi ve Doğrulama | Sentetik veri üretim scriptleri, test girdi paketleri, GenAI destekli test senaryoları ve doğrulama çıktıları. |
+| Faz 2 | Oğuzhan Hekimoğlu | Algoritmik Analizör ve Dokümantasyon | Zaman ve uzay karmaşıklığı (Big-O) analiz tabloları, UML şemaları ve kapsamlı Faz 2 ara raporu. |
+| Faz 3 | Batuhan Özdemir | Merkle Ağacı Görselleştirme ve Panel | Seçilen bir işlem için Merkle ağacı yapısını tüm hiyerarşik aşamalarıyla ayrı panelde gösteren ve doğrulama durumunu renklendiren arayüz. |
+| Faz 3 | Ali Kadir Özyaşar | Graf Görselleştirme ve Grafik Motoru | Yönlü okları net görünen, bakiye/miktar değişimlerine göre anlık şekil/boyut değiştiren esnek grafik paneli (D3.js/Cytoscape vb.). |
+| Faz 3 | M. Oğuzhan Tanrıverdi | Etkileşim, Filtreleme ve Dinamik Vurgu | Arama paneli kontrolcüleri, fon akışı animasyonlu iz takip sistemi ve miktar/zaman bazlı dinamik grafik filtreleme bileşenleri. |
+| Faz 3 | Oğuzhan Hekimoğlu | Backend API Entegrasyonu ve Veri Akışı | Ön yüzün tüm dinamik veri ihtiyacını karşılayan, in-memory veri yapılarını tüketen, hata yönetimi yapılmış RESTful API katmanı. |
+| Faz 3 | Ümmet Erkan | DevOps, Docker Konfigüratörü ve Kalite | Frontend, Backend ve AI servislerinin izole ağlarda çalıştığı docker-compose yapısı, kararlılık testleri ve proje demo videosu. |
+
+
 **Blokzincir İşlem Ağları Analizi (Blockchain Analysis)**
 
 Bu proje, blokzincir üzerindeki işlem (transaction) ağlarını, cüzdan bakiyelerini ve veri akışlarını analiz etmek için geliştirilmiş tam yığın (full-stack) bir web uygulamasıdır. Arka planda .NET 10.0 Web API, ön yüzde ise Angular 19 kullanılmaktadır. Tüm sistem Docker üzerinden izole bir şekilde çalışacak biçimde yapılandırılmıştır.
@@ -30,7 +51,7 @@ git clone https://github.com/oguzinyo/data-structure-project.git
 * İndirme işlemi bitince terminal üzerinden projenin ana klasörüne geçiş yapın:
 
 ```bash
-cd data-structure-project/Data-Structure-Project-integration-backend
+cd Data-Structure-Project/BlockchainAnalysis.Api
 
 ```
 
