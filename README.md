@@ -51,7 +51,7 @@ git clone https://github.com/oguzinyo/data-structure-project.git
 * İndirme işlemi bitince terminal üzerinden projenin ana klasörüne geçiş yapın:
 
 ```bash
-cd data-structure-project/Data-Structure-Project-integration-backend
+cd Data-Structure-Project/BlockchainAnalysis.Api
 
 ```
 
