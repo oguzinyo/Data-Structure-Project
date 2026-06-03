@@ -100,6 +100,10 @@ function eWidth(amt: number, all: number[]): number {
   return clamp(1.5 + t * 7, 1.5, 8.5);
 }
 
+function isExchangeNode(d: WalletNode): boolean {
+  return d.label === 'BORSA' || d.id === 'BINANCE_EXCHANGE' || String(d.id).includes('EXCHANGE') || String(d.label).includes('EXCHANGE');
+}
+
 @Component({
   selector: 'app-graph-engine',
   standalone: true,
@@ -361,18 +365,18 @@ export class GraphEngineComponent implements AfterViewInit, OnChanges, OnDestroy
     // Dış halka (highlight)
     ngrp.append('circle')
       .attr('r', d => nRadius(d.balance, allBal) + 7).attr('fill', 'none')
-      .attr('stroke', d => d.label === 'BORSA' ? C.exc : hlPath.nodes.has(d.id) ? C.nhl : 'transparent')
+      .attr('stroke', d => isExchangeNode(d) ? C.exc : hlPath.nodes.has(d.id) ? C.nhl : 'transparent')
       .attr('stroke-width', 1.5).attr('stroke-opacity', 0.5).attr('filter', 'url(#glow)');
 
     // Ana daire
     ngrp.append('circle').attr('class', 'nc')
       .attr('r', d => nRadius(d.balance, allBal))
       .attr('fill', d => {
-        if (d.label === 'BORSA') return '#2d0808';
+        if (isExchangeNode(d)) return '#2d0808';
         return !hasHL ? C.nd : hlPath.nodes.has(d.id) ? '#152d15' : C.ndim;
       })
       .attr('stroke', d => {
-        if (d.label === 'BORSA') return C.exc;
+        if (isExchangeNode(d)) return C.exc;
         return !hasHL ? C.nstr : hlPath.nodes.has(d.id) ? C.nhl : '#111e30';
       })
       .attr('stroke-width', d => hlPath.nodes.has(d.id) ? 2.5 : 1.5)
@@ -381,7 +385,7 @@ export class GraphEngineComponent implements AfterViewInit, OnChanges, OnDestroy
     // Bakiye etiketi
     ngrp.append('text').attr('text-anchor', 'middle').attr('dy', 4)
       .attr('fill', d => {
-        if (d.label === 'BORSA') return '#f87171';
+        if (isExchangeNode(d)) return '#f87171';
         return (!hasHL || hlPath.nodes.has(d.id)) ? C.acc : '#1a2a3a';
       })
       .attr('font-size', d => nRadius(d.balance, allBal) > 22 ? 9 : 7)
@@ -403,7 +407,7 @@ export class GraphEngineComponent implements AfterViewInit, OnChanges, OnDestroy
         d3.select(ev.currentTarget as SVGGElement).select('.nc').attr('stroke-width', 3).attr('filter', 'url(#glow)');
         this.tooltip = {
           x: ev.offsetX + 14, y: ev.offsetY - 10,
-          lines: [`Cüzdan: ${d.id}`, `Bakiye: ${d.balance} ₿`, `Tür: ${d.label === 'BORSA' ? 'Borsa' : 'Normal'}`],
+          lines: [`Cüzdan: ${d.id}`, `Bakiye: ${d.balance} ₿`, `Tür: ${isExchangeNode(d) ? 'Borsa' : 'Normal'}`],
         };
       })
       .on('mouseout', (ev: MouseEvent, d) => {

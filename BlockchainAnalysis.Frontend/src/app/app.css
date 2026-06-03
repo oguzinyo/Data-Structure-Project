@@ -312,6 +312,7 @@
   align-items: center;
   gap: 12px;
   pointer-events: auto;
+  z-index: 20;
 }
 
 .status-indicator {
