@@ -1,17 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, ViewEncapsulation, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-export interface MerkleNode {
+export interface BatuhanMerkleNode {
   hash: string;
-  data?: string;
-  left?: MerkleNode;
-  right?: MerkleNode;
+  label?: string;
+  state?: 'default' | 'target' | 'proof' | 'computed' | 'root';
+  left?: BatuhanMerkleNode;
+  right?: BatuhanMerkleNode;
 }
 
-export interface MerkleTreeData {
+export interface BatuhanMerkleTreeData {
   rootHash: string;
   isValid: boolean;
-  rootNode: MerkleNode;
+  rootNode: BatuhanMerkleNode;
 }
 
 @Component({
@@ -19,44 +20,20 @@ export interface MerkleTreeData {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './merkle-panel.html',
-  styleUrls: ['./merkle-panel.css']
+  styleUrls: ['./merkle-panel.css'],
+  encapsulation: ViewEncapsulation.None
 })
-export class MerklePanelComponent implements OnInit {
+export class BatuhanMerklePanelComponent {
+  @Input() public treeData!: BatuhanMerkleTreeData;
 
-  public treeData!: MerkleTreeData;
+  @ViewChild('merkleContainer') merkleContainer!: ElementRef;
 
-<<<<<<< Updated upstream
-  ngOnInit(): void {
-    this.loadMockData();
-  }
-
-  private loadMockData(): void {
-    this.treeData = {
-      rootHash: '8a5f3b1c9d2e...',
-      isValid: true,
-      rootNode: {
-        hash: '8a5f3b1c9d2e...',
-        left: {
-          hash: '4c2d1f9a...',
-          left: { hash: 'tx1_hash', data: '0xALICE -> 0xBOB (50)' },
-          right: { hash: 'tx2_hash', data: '0xBOB -> 0xCHARLIE (150)' }
-        },
-        right: {
-          hash: '9e7b4d2e...',
-          left: { hash: 'tx3_hash', data: '0xALICE -> 0xDAVID (20)' },
-          right: undefined
-        }
-      }
-    };
-=======
-  // Tüm durum (state) değişkenlerini tek bir alanda topladık
   public zoomScale: number = 1.0;
   public isFullscreen: boolean = false;
   public translateX: number = 0;
   public translateY: number = 0;
   public isDragging: boolean = false;
 
-  // Özel (private) başlangıç koordinatları
   private startX: number = 0;
   private startY: number = 0;
 
@@ -72,7 +49,6 @@ export class MerklePanelComponent implements OnInit {
     }
   }
 
-  // Tarayıcının yerleşik tam ekran mekanizmasını tetikleyen fonksiyon
   public BatuhanToggleFullscreen(): void {
     const element = this.merkleContainer.nativeElement;
 
@@ -85,11 +61,9 @@ export class MerklePanelComponent implements OnInit {
     }
   }
 
-  // Kullanıcı ESC tuşuna bastığında veya tam ekrandan çıktığında durumu senkronize eder
   @HostListener('document:fullscreenchange', [])
-  public BatuhanOnFullscreenChange(): void {
+  public onFullscreenChange(): void {
     this.isFullscreen = document.fullscreenElement === this.merkleContainer.nativeElement;
->>>>>>> Stashed changes
   }
 
   public BatuhanOnMouseDown(event: MouseEvent): void {
@@ -98,7 +72,6 @@ export class MerklePanelComponent implements OnInit {
     this.startY = event.clientY - this.translateY;
   }
 
-  // Fareyi bırakma olayını tüm ekranda dinliyoruz ki takılma olmasın
   @HostListener('document:mouseup')
   public BatuhanOnMouseUp(): void {
     this.isDragging = false;

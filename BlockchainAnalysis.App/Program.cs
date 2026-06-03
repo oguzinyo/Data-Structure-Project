@@ -116,12 +116,12 @@ namespace BlockchainAnalysis.App
                 payloads.Add(payload);
 
                 // Kendi yazdığın ComputeHash metodu ile SHA256 hesabı
-                string hash = MerkleTree.ComputeHash(payload);
+                string hash = AliMerkleTree.ComputeHash(payload);
                 Console.WriteLine($"Tx Hash {i + 1}: {hash.Substring(0, 16)}...");
             }
 
             // Ağacı inşa et ve kökü al
-            var merkleTree = new MerkleTree();
+            var merkleTree = new AliMerkleTree();
             string rootHash = merkleTree.Build(payloads);
             Console.WriteLine($"Merkle Root: {rootHash.Substring(0, 24)}...");
 
@@ -188,21 +188,21 @@ namespace BlockchainAnalysis.App
             // --- TEST SENARYOLARI ---
 
             Console.WriteLine("\nSenaryo A: 0xALICE'ten cikan TUM fon akisi (Ileriye Donuk BFS)");
-            var allFlow = tracker.TrackForwardFlow("0xALICE");
+            var allFlow = tracker.BatuhanTrackForwardFlow("0xALICE");
             foreach (var tx in allFlow)
             {
                 Console.WriteLine($" -> {tx.FromAddress} gonderdi {tx.ToAddress} | Miktar: {tx.Amount} | Zaman: {tx.Timestamp:HH:mm:ss.fff}");
             }
 
             Console.WriteLine("\nSenaryo B: 0xALICE'ten cikan akis (Miktar Filtresi: Sadece 100 birim uzeri)");
-            var highValueFlow = tracker.TrackForwardFlow("0xALICE", minAmount: 100m);
+            var highValueFlow = tracker.BatuhanTrackForwardFlow("0xALICE", minAmount: 100m);
             foreach (var tx in highValueFlow)
             {
                 Console.WriteLine($" -> {tx.FromAddress} gonderdi {tx.ToAddress} | Miktar: {tx.Amount} | Zaman: {tx.Timestamp:HH:mm:ss.fff}");
             }
 
             Console.WriteLine("\nSenaryo C: 0xDAVID'e gelen fonlarin asil kaynagi (Geriye Donuk BFS)");
-            var pastFlow = tracker.TrackBackwardFlow("0xDAVID");
+            var pastFlow = tracker.BatuhanTrackBackwardFlow("0xDAVID");
             foreach (var tx in pastFlow)
             {
                 Console.WriteLine($" <- {tx.FromAddress} gonderdi {tx.ToAddress} | Miktar: {tx.Amount} | Zaman: {tx.Timestamp:HH:mm:ss.fff}");

@@ -1,0 +1,91 @@
+
+<div class="graph-wrapper">
+
+    <!-- D3 SVG Alanı -->
+    <svg #svgContainer class="graph-svg"></svg>
+  
+    <!-- Tooltip -->
+    @if (tooltip) {
+      <div class="tooltip" [style.left.px]="tooltip.x" [style.top.px]="tooltip.y">
+        @for (line of tooltip.lines; track $index) {
+          <div [class.tooltip-title]="$index === 0">{{ line }}</div>
+        }
+      </div>
+    }
+  
+    <!-- Seçili kenar bilgisi -->
+    @if (selectedEdge) {
+
+      <div class="info-panel">
+        <div class="info-title">▸ İŞLEM DETAYI</div>
+        <div class="info-row">
+          <span>ID</span>
+          <span>{{ selectedEdge.id }}</span>
+        </div>
+        <div class="info-row">
+          <span>Kaynak</span>
+          <span>{{ getNodeId(selectedEdge.source) }}</span>
+        </div>
+        <div class="info-row">
+          <span>Hedef</span>
+          <span>{{ getNodeId(selectedEdge.target) }}</span>
+        </div>
+        <div class="info-row">
+          <span>Miktar</span>
+          <span class="tx-amount">{{ selectedEdge.amount }} ₿</span>
+        </div>
+        <div class="info-row">
+          <span>Tarih</span>
+          <span>{{ selectedEdge.timestamp | date:'dd.MM.yyyy' }}</span>
+        </div>
+        <div class="info-row">
+          <span>Saat</span>
+          <span>{{ selectedEdge.timestamp | date:'HH:mm:ss' }}</span>
+        </div>
+      </div>
+    }
+  
+    <!-- Seçili düğüm bilgisi -->
+    @if (selectedNode) {
+      <div class="info-panel node-panel">
+        <div class="info-title">▸ CÜZDAN DETAYI</div>
+        <div class="info-row">
+          <span>ID</span>
+          <span>{{ selectedNode.id }}</span>
+        </div>
+        <div class="info-row">
+          <span>Bakiye</span>
+          <span>{{ selectedNode.balance }} ₿</span>
+        </div>
+    
+        @if (selectedNodeTxs.length > 0) {
+          <div class="tx-title">▸ İŞLEM GEÇMİŞİ ({{ selectedNodeTxs.length }}) <small style="color:#64748b; font-weight:normal;">— tıkla → Merkle doğrulama</small></div>
+          @for (tx of selectedNodeTxs; track tx.id) {
+            <div class="tx-row tx-clickable" (click)="onTxRowClicked(tx)">
+              <div class="tx-id">{{ tx.id }}</div>
+              <div class="tx-detail">
+                <span class="tx-amount">{{ tx.amount }} ₿</span>
+                <span class="tx-time">
+                  {{ tx.timestamp | date:'dd.MM.yyyy HH:mm' }}
+                </span>
+              </div>
+              <div class="tx-flow">
+                <span [class]="isSender(tx) ? 'tx-out' : 'tx-in'">
+                  {{ isSender(tx) ? '↑ Gönderildi' : '↓ Alındı' }}
+                </span>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    }
+  
+    <!-- Lejant -->
+    <div class="legend">
+      <div class="legend-title">LEJANT</div>
+      <div class="legend-row"><span class="dot node-dot"></span> Cüzdan (boyut = bakiye)</div>
+      <div class="legend-row"><span class="dot exchange-dot"></span> Borsa adresi</div>
+      <div class="legend-row"><span class="line edge-line"></span> Transfer (kalınlık = miktar)</div>
+    </div>
+  
+  </div>

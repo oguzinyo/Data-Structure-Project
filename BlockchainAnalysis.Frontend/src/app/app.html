@@ -1,1 +1,120 @@
-<app-merkle-panel></app-merkle-panel>
+<div class="dashboard-wrapper">
+
+    <app-graph-engine
+        [graphData]="graphData"
+        [highlightedPath]="MehmetHighlight"
+        (nodeClicked)="BatuhanOnNodeClicked($event)"
+        (edgeClicked)="BatuhanOnEdgeClicked($event)"
+        (selectionCleared)="onSelectionCleared()"
+        class="graph-background">
+    </app-graph-engine>
+
+    <div class="glass-overlay">
+
+        <div class="left-column">
+
+            <div class="glass-panel main-panel">
+                <div class="panel-header">
+                    <h2>Ağ İzleme Terminali</h2>
+                    <span class="settings-icon">⚙</span>
+                </div>
+
+                <div class="input-group">
+                    <label>Kaynak Cüzdan</label>
+                    <div class="input-wrapper">
+                        <input type="text" #startInput placeholder="Address: 4C611063..." [value]="startWallet" (input)="startWallet = startInput.value">
+                        <span class="qr-icon">⚏</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Hedef Cüzdan</label>
+                    <div class="input-wrapper">
+                        <input type="text" #targetInput placeholder="Address: 23e98070..." [value]="targetWallet" (input)="targetWallet = targetInput.value">
+                        <span class="qr-icon">⚏</span>
+                    </div>
+                </div>
+
+                <button class="neon-button primary" (click)="MehmetFindPath()">☍ Rotayı Bul</button>
+                <button class="neon-button secondary" (click)="MehmetClear()" style="margin-top: 10px;">Temizle</button>
+
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <label>Hacim Filtresi (Min)</label>
+                        <span class="neon-badge">{{ MehmetMinAmount }} BTC</span>
+                    </div>
+                    <input type="range" min="0" max="5000" value="0" #amountSlider (input)="MehmetUpdateFilter(amountSlider.value)" class="neon-slider">
+                </div>
+            </div>
+
+            <div class="glass-panel activity-panel">
+                <div class="panel-header">
+                    <h3>Activity Feed</h3>
+                    <span class="dots">...</span>
+                </div>
+                <div class="activity-list">
+                    @for (activity of recentActivities; track $index) {
+                    <div class="activity-item">
+                        <div class="icon-box" [class.btc]="activity.type === 'btc'" [class.eth]="activity.type === 'eth'">{{ activity.symbol }}</div>
+                        <div class="activity-details">
+                            <span class="amount">{{ activity.amount }} {{ activity.currency }} <small>{{ activity.asset }}</small></span>
+                        </div>
+                        <span class="time">{{ activity.time }}</span>
+                    </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+
+        <div class="right-column">
+
+            <div class="glass-panel details-panel">
+                <div class="panel-header">
+                    <h3>İşlem Detayları</h3>
+                </div>
+                
+                @if (transactionDetails) {
+                <pre class="json-viewer">
+&#123;
+    <span class="j-key">"name"</span>: <span class="j-str">"transaction"</span>,
+    <span class="j-key">"address"</span>: <span class="j-str">"{{ transactionDetails.address }}"</span>,
+    <span class="j-key">"status"</span>: <span class="j-str">"{{ transactionDetails.status }}"</span>,
+    <span class="j-key">"data"</span>: &#123;
+        <span class="j-key">"amount"</span>: <span class="j-str">"{{ transactionDetails.data?.amount }}"</span>,
+        <span class="j-key">"fee"</span>: <span class="j-str">"{{ transactionDetails.data?.fee }}"</span>,
+        <span class="j-key">"source"</span>: <span class="j-str">"{{ transactionDetails.data?.source }}"</span>,
+        <span class="j-key">"target"</span>: <span class="j-str">"{{ transactionDetails.data?.target }}"</span>,
+        <span class="j-key">"timestamp"</span>: <span class="j-str">"{{ transactionDetails.data?.timestamp }}"</span>
+    &#125;
+&#125;
+                </pre>
+                } @else {
+                <div class="json-viewer" style="text-align: center; color: #64748b; padding: 2rem;">Ağ grafiğinden bir işlem seçiniz.</div>
+                }
+            </div>
+
+            <div class="glass-panel merkle-panel">
+                <div class="panel-header">
+                    <h3>Merkle Tree</h3>
+                </div>
+                
+                @if (currentMerkleData) {
+                    <app-merkle-panel [treeData]="currentMerkleData"></app-merkle-panel>
+                } @else {
+                    <div style="text-align: center; color: #64748b; padding: 2rem; font-family: 'JetBrains Mono', monospace;">
+                        [ Bekleniyor ]<br><br>Ağacı çözümlemek için<br>grafikten bir transfer işlemi seçiniz.
+                    </div>
+                }
+            </div>
+
+        </div>
+
+        <div class="bottom-bar">
+            <span class="status-indicator"></span>
+            <span class="status-text">Network <strong class="text-green">Healthy</strong> - Sync 99.8% | Latest Block #8,451,102</span>
+        </div>
+
+    </div>
+
+</div>
