@@ -7,13 +7,13 @@ namespace BlockchainAnalysis.DataStructures;
 
 public class BlockchainGraph : IGraph
 {
-    // Eski GraphNode yerine doğrudan BatuhanWalletNode kullanıyoruz
-    private readonly HashTable<string, BatuhanWalletNode> _nodes = new(hashFunc: WalletHashFunctions.HashFNV1a);
-    private readonly HashTable<string, List<BatuhanTransactionEdge>> _adjacencyList = new(hashFunc: WalletHashFunctions.HashFNV1a);
+    // Eski GraphNode yerine doğrudan WalletNode kullanıyoruz
+    private readonly HashTable<string, WalletNode> _nodes = new(hashFunc: WalletHashFunctions.HashFNV1a);
+    private readonly HashTable<string, List<TransactionEdge>> _adjacencyList = new(hashFunc: WalletHashFunctions.HashFNV1a);
     private readonly List<string> _addresses = new();
     private readonly object _graphLock = new object();
 
-    public void BatuhanAddVertex(BatuhanWalletNode wallet)
+    public void BatuhanAddVertex(WalletNode wallet)
     {
         lock (_graphLock)
         {
@@ -21,7 +21,7 @@ public class BlockchainGraph : IGraph
         }
     }
 
-public void BatuhanAddEdge(BatuhanTransactionEdge edge)
+public void BatuhanAddEdge(TransactionEdge edge)
     {
         lock (_graphLock)
         {
@@ -38,7 +38,7 @@ public void BatuhanAddEdge(BatuhanTransactionEdge edge)
 
     public IReadOnlyList<string> BatuhanGetAddresses() => _addresses;
 
-    public BatuhanWalletNode BatuhanGetNode(string address)
+    public WalletNode BatuhanGetNode(string address)
     {
         if (_nodes.TryGetValue(address, out var node))
         {
@@ -48,17 +48,17 @@ public void BatuhanAddEdge(BatuhanTransactionEdge edge)
         throw new KeyNotFoundException($"Graph node not found: {address}");
     }
 
-public IReadOnlyList<BatuhanTransactionEdge> BatuhanGetOutgoingEdges(string address)
+public IReadOnlyList<TransactionEdge> BatuhanGetOutgoingEdges(string address)
     {
         lock (_graphLock)
         {
             if (!_adjacencyList.TryGetValue(address, out var edges))
             {
-                return Array.Empty<BatuhanTransactionEdge>();
+                return Array.Empty<TransactionEdge>();
             }
             
             // Okuma sırasında veri değişmesin diye listenin kopyasını döndürüyoruz
-            return new List<BatuhanTransactionEdge>(edges);
+            return new List<TransactionEdge>(edges);
         }
     }
 
@@ -140,15 +140,15 @@ public IReadOnlyList<BatuhanTransactionEdge> BatuhanGetOutgoingEdges(string addr
             return;
         }
 
-        _nodes.Add(address, new BatuhanWalletNode(address));
-        _adjacencyList.Add(address, new List<BatuhanTransactionEdge>());
+        _nodes.Add(address, new WalletNode(address));
+        _adjacencyList.Add(address, new List<TransactionEdge>());
         _addresses.Add(address);
     }
 
     // 1. Geriye Dönük Akış İçin Gelen Kenarları Bulma Metodu
-    public IReadOnlyList<BatuhanTransactionEdge> BatuhanGetIncomingEdges(string address)
+    public IReadOnlyList<TransactionEdge> BatuhanGetIncomingEdges(string address)
     {
-        var incomingEdges = new List<BatuhanTransactionEdge>();
+        var incomingEdges = new List<TransactionEdge>();
         foreach (var walletAddress in _addresses)
         {
             foreach (var edge in BatuhanGetOutgoingEdges(walletAddress))
@@ -163,9 +163,9 @@ public IReadOnlyList<BatuhanTransactionEdge> BatuhanGetOutgoingEdges(string addr
     }
 
     // 2. İleriye Dönük Fon Akışı (İşlem Döndüren ve Döngü Korumalı BFS)
-    public List<BatuhanTransactionEdge> BatuhanGetForwardFundFlow(string startAddress)
+    public List<TransactionEdge> BatuhanGetForwardFundFlow(string startAddress)
     {
-        var flowEdges = new List<BatuhanTransactionEdge>();
+        var flowEdges = new List<TransactionEdge>();
         // Blokzincirdeki döngüleri (A -> B -> A) kırmak için ID bazlı takip
         var visitedEdges = new HashTable<string, bool>(16, WalletHashFunctions.HashFNV1a);
         var queue = new UmmetQueue<string>();
@@ -196,9 +196,9 @@ public IReadOnlyList<BatuhanTransactionEdge> BatuhanGetOutgoingEdges(string addr
     }
 
     // 3. Geriye Dönük Fon Kaynağı İzleme (İşlem Döndüren BFS)
-    public List<BatuhanTransactionEdge> BatuhanGetBackwardFundFlow(string startAddress)
+    public List<TransactionEdge> BatuhanGetBackwardFundFlow(string startAddress)
     {
-        var flowEdges = new List<BatuhanTransactionEdge>();
+        var flowEdges = new List<TransactionEdge>();
         var visitedEdges = new HashTable<string, bool>(16, WalletHashFunctions.HashFNV1a);
         var queue = new UmmetQueue<string>();
 

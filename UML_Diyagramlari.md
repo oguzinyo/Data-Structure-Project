@@ -12,15 +12,15 @@
 classDiagram
     class IGraph {
         <<interface>>
-        +BatuhanAddVertex(wallet: BatuhanWalletNode)
-        +BatuhanAddEdge(transaction: BatuhanTransactionEdge)
-        +BatuhanGetForwardFundFlow(startAddress: string) List~BatuhanTransactionEdge~
-        +BatuhanGetBackwardFundFlow(startAddress: string) List~BatuhanTransactionEdge~
-        +BatuhanGetOutgoingEdges(address: string) IReadOnlyList~BatuhanTransactionEdge~
-        +BatuhanGetIncomingEdges(address: string) IReadOnlyList~BatuhanTransactionEdge~
+        +BatuhanAddVertex(wallet: WalletNode)
+        +BatuhanAddEdge(transaction: TransactionEdge)
+        +BatuhanGetForwardFundFlow(startAddress: string) List~TransactionEdge~
+        +BatuhanGetBackwardFundFlow(startAddress: string) List~TransactionEdge~
+        +BatuhanGetOutgoingEdges(address: string) IReadOnlyList~TransactionEdge~
+        +BatuhanGetIncomingEdges(address: string) IReadOnlyList~TransactionEdge~
     }
 
-    class BatuhanWalletNode {
+    class WalletNode {
         +Address: string
         +Balance: decimal
         +BalanceLock: object
@@ -29,10 +29,10 @@ classDiagram
         +GetCurrentBalance() decimal
     }
 
-    class BatuhanTransactionEdge {
+    class TransactionEdge {
         +TransactionId: string
-        +From: BatuhanWalletNode
-        +To: BatuhanWalletNode
+        +From: WalletNode
+        +To: WalletNode
         +Amount: decimal
         +Fee: decimal
         +Timestamp: DateTime
@@ -41,16 +41,16 @@ classDiagram
     }
 
     class BlockchainGraph {
-        -_nodes: HashTable~string, BatuhanWalletNode~
-        -_adjacencyList: HashTable~string, List~BatuhanTransactionEdge~~
+        -_nodes: HashTable~string, WalletNode~
+        -_adjacencyList: HashTable~string, List~TransactionEdge~~
         -_addresses: List~string~
         -_graphLock: object
         +BatuhanAddVertex(wallet)
         +BatuhanAddEdge(edge)
         +BatuhanBreadthFirstTraversal(startAddress) List~string~
         +BatuhanDepthFirstTraversal(startAddress) List~string~
-        +BatuhanGetForwardFundFlow(startAddress) List~BatuhanTransactionEdge~
-        +BatuhanGetBackwardFundFlow(startAddress) List~BatuhanTransactionEdge~
+        +BatuhanGetForwardFundFlow(startAddress) List~TransactionEdge~
+        +BatuhanGetBackwardFundFlow(startAddress) List~TransactionEdge~
         +MehmetFindPath(start, target) List~string~
         +MehmetFindMaxCapacityPath(start, target) List~string~
     }
@@ -95,8 +95,8 @@ classDiagram
 
     class FundFlowTracker {
         -_graph: IGraph
-        +BatuhanTrackForwardFlow(startAddress, filters) List~BatuhanTransactionEdge~
-        +BatuhanTrackBackwardFlow(endAddress, filters) List~BatuhanTransactionEdge~
+        +BatuhanTrackForwardFlow(startAddress, filters) List~TransactionEdge~
+        +BatuhanTrackBackwardFlow(endAddress, filters) List~TransactionEdge~
     }
 
     class UmmetDynamicBalanceEngine {
@@ -120,15 +120,15 @@ classDiagram
     BlockchainGraph --> HashTable : uses
     BlockchainGraph --> UmmetQueue : BFS
     BlockchainGraph --> UmmetStack : DFS
-    BlockchainGraph --> BatuhanWalletNode : stores
-    BlockchainGraph --> BatuhanTransactionEdge : stores
-    BatuhanTransactionEdge --> BatuhanWalletNode : From/To
+    BlockchainGraph --> WalletNode : stores
+    BlockchainGraph --> TransactionEdge : stores
+    TransactionEdge --> WalletNode : From/To
     FundFlowTracker --> IGraph : depends on
     UmmetDynamicBalanceEngine --> IGraph : depends on
     AliMerkleTree --> AliMerkleNode : builds
     AliSyntheticDataGenerator --> HashTable : uses
-    AliSyntheticDataGenerator --> BatuhanWalletNode : generates
-    AliSyntheticDataGenerator --> BatuhanTransactionEdge : generates
+    AliSyntheticDataGenerator --> WalletNode : generates
+    AliSyntheticDataGenerator --> TransactionEdge : generates
 ```
 
 ---
