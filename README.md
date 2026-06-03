@@ -83,6 +83,6 @@ Konteynerleri ve ağ yapılandırmalarını sistemden tamamen temizlemek isterse
 docker compose down
 
 ```
-[Proje Raporu ve Analiz.pdf](https://github.com/user-attachments/files/28553262/Proje.Raporu.ve.Analiz.pdf)
+[Proje Raporu ve Analiz](https://github.com/user-attachments/files/28553262/Proje.Raporu.ve.Analiz.pdf)
 
 
