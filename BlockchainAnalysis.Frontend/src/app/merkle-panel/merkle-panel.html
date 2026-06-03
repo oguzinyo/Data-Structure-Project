@@ -1,0 +1,59 @@
+<div #merkleContainer class="merkle-container" [class.fullscreen-mode]="isFullscreen">
+
+  <div class="merkle-header">
+    <div class="proof-status" [class.valid]="treeData.isValid">
+      <span class="indicator"></span>
+      Merkle Proof: {{ treeData.isValid ? 'Doğrulandı' : 'Geçersiz' }}
+    </div>
+
+    <div class="zoom-controls">
+      <button class="zoom-btn action-btn" (click)="BatuhanToggleFullscreen()" title="Görünümü Değiştir">
+        {{ isFullscreen ? '🗗 Küçült' : '🗖 Tam Ekran' }}
+      </button>
+      <div class="separator"></div>
+      <button class="zoom-btn" (click)="BatuhanZoomOut()" title="Uzaklaştır">−</button>
+      <span class="zoom-level">{{ (zoomScale * 100).toFixed(0) }}%</span>
+      <button class="zoom-btn" (click)="BatuhanZoomIn()" title="Yakınlaştır">+</button>
+      <button class="zoom-btn reset-btn" (click)="BatuhanResetZoom()" title="Sıfırla">⟲</button>
+    </div>
+  </div>
+
+  <div class="tree-viewport">
+    <div class="tree-wrapper" [style.transform]="'scale(' + zoomScale + ')'">
+      @if (treeData.rootNode) {
+      <ng-container *ngTemplateOutlet="drawNode; context: { $implicit: treeData.rootNode }"></ng-container>
+      }
+    </div>
+  </div>
+
+</div>
+
+<ng-template #drawNode let-node>
+  <div class="tree-node-group">
+
+    <div class="m-node" [ngClass]="node.state || 'default'">
+      <span class="m-hash">{{ node.hash }}</span>
+      @if (node.label) {
+      <span class="m-label">{{ node.label }}</span>
+      }
+    </div>
+
+    @if (node.left || node.right) {
+    <div class="tree-branches">
+
+      @if (node.left) {
+      <div class="branch left-branch">
+        <ng-container *ngTemplateOutlet="drawNode; context: { $implicit: node.left }"></ng-container>
+      </div>
+      }
+
+      @if (node.right) {
+      <div class="branch right-branch">
+        <ng-container *ngTemplateOutlet="drawNode; context: { $implicit: node.right }"></ng-container>
+      </div>
+      }
+
+    </div>
+    }
+  </div>
+</ng-template>

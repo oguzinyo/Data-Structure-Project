@@ -1,0 +1,30 @@
+services:
+  backend-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ummet_backend_service
+    restart: unless-stopped
+    ports:
+      - "5050:5050"
+    stdin_open: true
+    tty: true
+    networks:
+      - ummet_blockchain_net
+
+  frontend-app:
+    build:
+      context: ./BlockchainAnalysis.Frontend
+      dockerfile: Dockerfile
+    container_name: ummet_frontend_service
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    networks:
+      - ummet_blockchain_net
+    depends_on:
+      - backend-app
+
+networks:
+  ummet_blockchain_net:
+    driver: bridge
