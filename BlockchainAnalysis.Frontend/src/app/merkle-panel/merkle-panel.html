@@ -18,14 +18,13 @@
     </div>
   </div>
 
-  <div class="tree-viewport">
-    <div class="tree-wrapper" [style.transform]="'scale(' + zoomScale + ')'">
+  <div class="tree-viewport" (mousedown)="BatuhanOnMouseDown($event)">
+    <div class="tree-wrapper" [style.transform]="'translate(' + translateX + 'px, ' + translateY + 'px) scale(' + zoomScale + ')'">
       @if (treeData.rootNode) {
       <ng-container *ngTemplateOutlet="drawNode; context: { $implicit: treeData.rootNode }"></ng-container>
       }
     </div>
   </div>
-
 </div>
 
 <ng-template #drawNode let-node>
