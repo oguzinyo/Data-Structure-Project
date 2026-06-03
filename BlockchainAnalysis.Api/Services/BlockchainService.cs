@@ -8,7 +8,7 @@ namespace BlockchainAnalysis.Api.Services;
 public class BlockchainService
 {
     private readonly BlockchainGraph _graph;
-    private readonly AliSyntheticDataGenerator _dataGenerator;
+    private readonly SyntheticDataGenerator _dataGenerator;
     private readonly FundFlowTracker _flowTracker;
     private readonly UmmetDynamicBalanceEngine _balanceEngine;
     private readonly List<TransactionEdge> _allTransactions;
@@ -16,7 +16,7 @@ public class BlockchainService
     public BlockchainService()
     {
         _graph = new BlockchainGraph();
-        _dataGenerator = new AliSyntheticDataGenerator(20);
+        _dataGenerator = new SyntheticDataGenerator(20);
 
         foreach (var wallet in _dataGenerator.WalletsTable)
         {
@@ -191,7 +191,7 @@ public class BlockchainService
             txIds.Add(tx.TransactionId);
         }
 
-        var merkleTree = new AliMerkleTree();
+        var merkleTree = new MerkleTree();
         string rootHash = merkleTree.Build(payloads);
 
         int targetIndex = -1;
@@ -209,7 +209,7 @@ public class BlockchainService
         return new MerkleTreeDto
         {
             RootHash = rootHash,
-            IsValid = merkleTree.Verify(payloads, rootHash),
+            IsValid = merkleTree.AliVerify(payloads, rootHash),
             RootNode = rootNode
         };
     }
@@ -233,7 +233,7 @@ public class BlockchainService
     }
 
     private static MerkleNodeDto BuildMerkleNodeDto(
-        AliMerkleNode? node, List<string> payloads, List<string> txIds, int targetIndex, int leafIndex = 0)
+        MerkleNode? node, List<string> payloads, List<string> txIds, int targetIndex, int leafIndex = 0)
     {
         if (node == null)
             return new MerkleNodeDto { Hash = "", State = "default" };
@@ -258,7 +258,7 @@ public class BlockchainService
         return dto;
     }
 
-    private static int CountLeaves(AliMerkleNode? node)
+    private static int CountLeaves(MerkleNode? node)
     {
         if (node == null) return 0;
         if (node.Left == null && node.Right == null) return 1;
