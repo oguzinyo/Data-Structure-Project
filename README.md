@@ -34,9 +34,6 @@
 
 - **Veri Yönetimi:**
   - Frontend-Backend bağlantı mimarı
-  - Data flow control
-  - Caching mekanizmaları
-  - State management
  
 - **Docker:**
   - Dockerfile optimization - Multi-stage build setup
@@ -44,6 +41,17 @@
 - **Documentation:**
   - README.md teknik içeriği
   - Her ana klasörde dökümantasyon
+
+ - **Direkt Oluşturduğum Dosyalar:**
+   - WalletNode.cs
+   - TransactionEdge.cs
+   - FundFlowTracker.cs
+   - DirectedGraph.cs
+   - BlockchainGraph.cs
+   - app/merkle-panel klasörü
+   - app/services
+  
+   - 
 ### Yaptığı İşler:
 ```
 ✓ Graph engine'in mimarı (BatuhanGraph engine)
