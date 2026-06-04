@@ -31,6 +31,8 @@
   justify-content: space-between;
   padding: 2.5rem;
   box-sizing: border-box;
+  flex-wrap: wrap;
+  overflow-y: auto;
 }
 
 .left-column, .right-column {
@@ -38,7 +40,10 @@
   flex-direction: column;
   gap: 1.5rem;
   pointer-events: auto;
-  width: 380px;
+  width: 100%;
+  max-width: 380px;
+  min-width: 280px;
+  transition: all 0.3s ease;
 }
 
 /* Glassmorphism Panel Ayarları */
@@ -166,19 +171,8 @@
       color: #fff;
     }
 
-/* Slider */
-.slider-group {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid rgba(255,255,255,0.05);
-}
 
-.slider-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
+
 
 .neon-badge {
   background: rgba(64, 224, 208, 0.15);
@@ -191,26 +185,6 @@
   text-shadow: 0 0 5px #40e0d0;
 }
 
-.neon-slider {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, #a855f7, #40e0d0);
-  outline: none;
-}
-
-  .neon-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #fff;
-    border: 2px solid #40e0d0;
-    cursor: pointer;
-    box-shadow: 0 0 12px #40e0d0;
-  }
 
 /* Activity Feed & JSON */
 .activity-list {
@@ -338,6 +312,7 @@
   align-items: center;
   gap: 12px;
   pointer-events: auto;
+  z-index: 20;
 }
 
 .status-indicator {
