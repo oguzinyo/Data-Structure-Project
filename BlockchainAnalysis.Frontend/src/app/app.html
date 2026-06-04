@@ -1,9 +1,11 @@
 <div class="dashboard-wrapper">
 
-    <app-graph-engine 
+    <app-graph-engine
+        [graphData]="graphData"
         [highlightedPath]="MehmetHighlight"
         (nodeClicked)="BatuhanOnNodeClicked($event)"
         (edgeClicked)="BatuhanOnEdgeClicked($event)"
+        (selectionCleared)="onSelectionCleared()"
         class="graph-background">
     </app-graph-engine>
 
@@ -36,13 +38,7 @@
                 <button class="neon-button primary" (click)="MehmetFindPath()">☍ Rotayı Bul</button>
                 <button class="neon-button secondary" (click)="MehmetClear()" style="margin-top: 10px;">Temizle</button>
 
-                <div class="slider-group">
-                    <div class="slider-header">
-                        <label>Hacim Filtresi (Min)</label>
-                        <span class="neon-badge">{{ MehmetMinAmount }} BTC</span>
-                    </div>
-                    <input type="range" min="0" max="5000" value="0" #amountSlider (input)="MehmetUpdateFilter(amountSlider.value)" class="neon-slider">
-                </div>
+                
             </div>
 
             <div class="glass-panel activity-panel">
@@ -51,7 +47,7 @@
                     <span class="dots">...</span>
                 </div>
                 <div class="activity-list">
-                    @for (activity of recentActivities; track activity.time) {
+                    @for (activity of recentActivities; track $index) {
                     <div class="activity-item">
                         <div class="icon-box" [class.btc]="activity.type === 'btc'" [class.eth]="activity.type === 'eth'">{{ activity.symbol }}</div>
                         <div class="activity-details">
@@ -80,8 +76,10 @@
     <span class="j-key">"status"</span>: <span class="j-str">"{{ transactionDetails.status }}"</span>,
     <span class="j-key">"data"</span>: &#123;
         <span class="j-key">"amount"</span>: <span class="j-str">"{{ transactionDetails.data?.amount }}"</span>,
-        <span class="j-key">"volume"</span>: <span class="j-str">"{{ transactionDetails.data?.volume }}"</span>,
-        <span class="j-key">"validator"</span>: <span class="j-str">"{{ transactionDetails.data?.validator }}"</span>
+        <span class="j-key">"fee"</span>: <span class="j-str">"{{ transactionDetails.data?.fee }}"</span>,
+        <span class="j-key">"source"</span>: <span class="j-str">"{{ transactionDetails.data?.source }}"</span>,
+        <span class="j-key">"target"</span>: <span class="j-str">"{{ transactionDetails.data?.target }}"</span>,
+        <span class="j-key">"timestamp"</span>: <span class="j-str">"{{ transactionDetails.data?.timestamp }}"</span>
     &#125;
 &#125;
                 </pre>
@@ -106,11 +104,11 @@
 
         </div>
 
-        <div class="bottom-bar">
-            <span class="status-indicator"></span>
-            <span class="status-text">Network <strong class="text-green">Healthy</strong> - Sync 99.8% | Latest Block #8,451,102</span>
-        </div>
+    </div>
 
+    <div class="bottom-bar">
+        <span class="status-indicator"></span>
+        <span class="status-text">Network <strong class="text-green">Healthy</strong> - Sync 99.8% | Latest Block #8,451,102</span>
     </div>
 
 </div>

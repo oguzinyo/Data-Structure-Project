@@ -1,5 +1,6 @@
-import { Component, OnInit, ViewEncapsulation,ChangeDetectorRef } from '@angular/core';
-import { GraphEngineComponent, HighlightedPath } from './graph-engine/graph-engine';
+import { Component, OnInit, ViewEncapsulation, ChangeDetectorRef, NgZone, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { GraphEngineComponent, GraphData, HighlightedPath } from './graph-engine/graph-engine';
 import { BlockchainDataService } from './services/blockchain-data.service';
 import { BatuhanMerklePanelComponent } from './merkle-panel/merkle-panel';
 
@@ -14,6 +15,8 @@ import { BatuhanMerklePanelComponent } from './merkle-panel/merkle-panel';
 export class App implements OnInit {
   title = 'BlockchainAnalysis.Frontend';
 
+  graphData: GraphData = { nodes: [], edges: [] };
+
   startWallet: string = '';
   targetWallet: string = '';
   MehmetMinAmount: number = 0;
@@ -21,12 +24,30 @@ export class App implements OnInit {
 
   recentActivities: any[] = [];
   transactionDetails: any = null;
-  currentMerkleData: any = null; // Mükerrer tanım silindi, sadece burada bırakıldı
+  currentMerkleData: any = null;
 
-  constructor(private dataService: BlockchainDataService, private cdr: ChangeDetectorRef) { }
+  private isBrowser: boolean;
+
+  constructor(
+    private dataService: BlockchainDataService,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
 
   ngOnInit() {
+    if (!this.isBrowser) return;
+    this.loadGraphData();
     this.loadActivities();
+  }
+
+  loadGraphData() {
+    this.dataService.BatuhanGetGraphData().subscribe((data: any) => {
+      this.graphData = data;
+      this.cdr.detectChanges();
+    });
   }
 
   loadActivities() {
@@ -35,30 +56,49 @@ export class App implements OnInit {
     });
   }
 
-  // Grafikten bir kenara (işleme) tıklandığında çalışır
   BatuhanOnEdgeClicked(edgeData: any) {
-    console.log("Seçilen işlem ID:", edgeData.id);
+    this.ngZone.run(() => {
+      const src = typeof edgeData.source === 'object' ? edgeData.source.id : edgeData.source;
+      const tgt = typeof edgeData.target === 'object' ? edgeData.target.id : edgeData.target;
 
-    this.transactionDetails = { address: "Yükleniyor...", status: "pending" };
-    this.currentMerkleData = null; // Eski ağacı temizle
-
-    // İşlem detaylarını çek (Servis isimleri ve any tipleri düzeltildi)
-    this.dataService.BatuhanGetTransactionDetails(edgeData.id).subscribe((data: any) => {
-      this.transactionDetails = data;
+      this.transactionDetails = {
+        address: edgeData.id,
+        status: "valid",
+        data: {
+          amount: edgeData.amount + " BTC",
+          fee: (edgeData.fee ?? 0) + " BTC",
+          source: src,
+          target: tgt,
+          timestamp: new Date(edgeData.timestamp).toLocaleString('tr-TR')
+        }
+      };
+      this.currentMerkleData = null;
       this.cdr.detectChanges();
-    });
 
-    // Merkle Tree detaylarını çek
-    this.dataService.BatuhanGetMerkleTreeData(edgeData.id).subscribe((data: any) => {
-      this.currentMerkleData = data;
+      this.dataService.BatuhanGetMerkleTreeData(edgeData.id).subscribe((data: any) => {
+        this.ngZone.run(() => {
+          this.currentMerkleData = data;
+          this.cdr.detectChanges();
+        });
+      });
+    });
+  }
+
+  BatuhanOnNodeClicked(nodeData: any) {
+    this.ngZone.run(() => {
+      this.startWallet = nodeData.id;
+      this.transactionDetails = null;
+      this.currentMerkleData = null;
       this.cdr.detectChanges();
     });
   }
 
-  // Grafikten bir düğüme (cüzdana) tıklandığında çalışır
-  BatuhanOnNodeClicked(nodeData: any) {
-    console.log("Seçilen cüzdan ID:", nodeData.id);
-    this.startWallet = nodeData.id; // Sol paneldeki inputu otomatik doldur
+  onSelectionCleared() {
+    this.ngZone.run(() => {
+      this.transactionDetails = null;
+      this.currentMerkleData = null;
+      this.cdr.detectChanges();
+    });
   }
 
   MehmetUpdateFilter(value: string) {
@@ -67,10 +107,32 @@ export class App implements OnInit {
 
   MehmetFindPath() {
     if (!this.startWallet || !this.targetWallet) return;
-    this.MehmetHighlight = {
-      nodes: new Set([this.startWallet, this.targetWallet]),
-      edges: new Set([])
-    };
+
+    this.dataService.MehmetFindPath(this.startWallet, this.targetWallet).subscribe((result: any) => {
+      if (result.found && result.path.length > 0) {
+        const pathNodes = new Set<string>(result.path);
+        const pathEdges = new Set<string>();
+
+        for (let i = 0; i < result.path.length - 1; i++) {
+          const from = result.path[i];
+          const to = result.path[i + 1];
+          const edge = this.graphData.edges.find((e: any) => {
+            const src = typeof e.source === 'object' ? (e.source as any).id : e.source;
+            const tgt = typeof e.target === 'object' ? (e.target as any).id : e.target;
+            return src === from && tgt === to;
+          });
+          if (edge) pathEdges.add(edge.id);
+        }
+
+        this.MehmetHighlight = { nodes: pathNodes, edges: pathEdges };
+      } else {
+        this.MehmetHighlight = {
+          nodes: new Set([this.startWallet, this.targetWallet]),
+          edges: new Set()
+        };
+      }
+      this.cdr.detectChanges();
+    });
   }
 
   MehmetClear() {
@@ -80,5 +142,4 @@ export class App implements OnInit {
     this.transactionDetails = null;
     this.currentMerkleData = null;
   }
-
 }

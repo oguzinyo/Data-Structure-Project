@@ -16,7 +16,7 @@ namespace BlockchainAnalysis.Core
         }
 
         // Bakiye güncellemelerini eşzamanlı (Thread-safe) olarak gerçekleştirir.
-        public void UmmetUpdateBalanceSafely(BatuhanWalletNode wallet, decimal amount, bool isIncoming)
+        public void UmmetUpdateBalanceSafely(WalletNode wallet, decimal amount, bool isIncoming)
         {
             lock (wallet.BalanceLock)
             {

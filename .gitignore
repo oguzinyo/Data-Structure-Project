@@ -1,4 +1,45 @@
-.vs/
+# .NET
 [Bb]in/
 [Oo]bj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio
+.vs/
+*.csproj.user
+launchSettings.json
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# NuGet
+*.nupkg
+**/packages/
+
+# Node (Frontend)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Angular build output
+dist/
+.angular/
+
+# OS
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Environment / secrets
+.env
+.env.*
+appsettings.Development.json
+
+# Word temp files
+~$*.docx
