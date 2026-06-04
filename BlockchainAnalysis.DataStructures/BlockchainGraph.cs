@@ -6,6 +6,37 @@ using System.Collections.Generic;
 namespace BlockchainAnalysis.DataStructures;
 
 public class BlockchainGraph : IGraph
+/*Bu sınıf, blokzincir işlem ağını temsil eden, çoklu iş parçacığı güvenliğine (thread-safe) sahip ve gelişmiş rota bulma algoritmaları barındıran operasyonel graf motorudur. Temel IGraph arayüzünü uygular ve sistemin ana analitik katmanına veri sağlar.*/
+
+/*
+    BLOCKCHAINGRAPH İLE DIRECTEDGRAPH ARASINDAKİ FARK NEDİR?
+
+    Her iki sınıf da IGraph sözleşmesine uysa ve komşuluk listesi mimarisini kullansa da, tasarım amaçları ve mühendislik yaklaşımları açısından üç temel farkla ayrılırlar:
+
+    1. Kilitleme Stratejisi (Locking Strategy)
+    
+    - DirectedGraph: Mikro düzeyde (Fine-Grained) kilitleme yapar. Graf yapısına yeni bir kenar eklendiğinde grafı kilitlemez, 
+    sadece işlemi gerçekleştiren ilgili iki cüzdanın bakiye kilitlerini (BalanceLock) kullanır. Bu durum yapısal değişikliklerde yarış durumlarına açıktır ancak sadece bakiye güncellemeleri için yüksek hız sağlar.
+    
+    - BlockchainGraph: Makro düzeyde (Coarse-Grained) kilitleme yapar. _graphLock nesnesi ile düğüm ve kenar ekleme işlemlerini tamamen senkronize eder. 
+    Gerçek zamanlı ve çoklu simülasyon ortamlarında (örneğin API üzerinden aynı anda yüzlerce istek geldiğinde) veri bütünlüğünü kesin olarak garanti altına alır.
+    
+    2. Kapsülleme (Encapsulation) ve Bakiye Yönetimi
+    
+    - DirectedGraph: Bakiye güncellemesini graf sınıfının kendi içinde manuel olarak yapar (wallet.Balance -= amount). Nesne yönelimli tasarımın kapsülleme kuralını kısmen esnetir.
+    
+    - BlockchainGraph: Bakiye güncelleme sorumluluğunu tamamen veri modeline devreder. WalletNode sınıfı içinde önceden tanımlanmış, kendi kilidine sahip olan DeductFunds ve AddFunds metotlarını çağırır. 
+    Bu yaklaşım İlgilerin Ayrılığı (Separation of Concerns) prensibine tam uygundur.
+    
+    3. Hedef ve Kapsam
+    
+    - DirectedGraph: Graf dolaşım hızını ölçmek, bellek yapılarını test etmek ve kilit maliyetlerinden kaçınmak için tasarlanmış yalın bir temel veri yapısıdır.
+    
+    - BlockchainGraph: Projenin Faz 2 ve Faz 3 gereksinimlerinde istenen "Maksimum kapasite yolu" veya "Hedef düğümlere ulaşım analizi" gibi özel operasyonları içeren, canlı sisteme (API ve Frontend'e) bağlanmaya hazır, tam donanımlı analiz motorudur.
+
+
+*/
+
 {
     // Eski GraphNode yerine doğrudan WalletNode kullanıyoruz
     private readonly HashTable<string, WalletNode> _nodes = new(hashFunc: WalletHashFunctions.HashFNV1a);
@@ -227,9 +258,14 @@ public IReadOnlyList<TransactionEdge> BatuhanGetOutgoingEdges(string address)
         return flowEdges;
     }
 
+    /*Standart BFS ve DFS dolaşımlarına (BatuhanBreadthFirstTraversal, BatuhanDepthFirstTraversal) ve döngü korumalı fon akış izleyicilerine (BatuhanGetForwardFundFlow, BatuhanGetBackwardFundFlow) ek olarak iki özel analitik algoritma barındırır:*/
+
+
     // 1. Target Node Analysis: Finds the path between start and target addresses using BFS.
     public List<string> MehmetFindPath(string startAddress, string targetAddress)
     {
+    /*MehmetFindPath (Hedef Rota Analizi): Belirtilen başlangıç adresinden hedef adrese giden geçerli bir transfer yolu olup olmadığını 
+    Genişlik Öncelikli Arama (BFS) ile araştırır. Hedefe ulaşıldığında, parentMap (ebeveyn haritası) kullanılarak rota geriye doğru örülür ve kronolojik bir adres listesi olarak döndürülür.*/
         var path = new List<string>();
         var parentMap = new HashTable<string, string>(hashFunc: WalletHashFunctions.HashFNV1a);
         var queue = new UmmetQueue<string>();
@@ -276,6 +312,9 @@ public IReadOnlyList<TransactionEdge> BatuhanGetOutgoingEdges(string address)
     // 2. Maximum Capacity Path: Finds the route with the highest transaction volume.
     public List<string> MehmetFindMaxCapacityPath(string startAddress, string targetAddress)
     {
+    /*MehmetFindMaxCapacityPath (Maksimum Kapasite Yolu): Ağ üzerindeki en yoğun finansal akış damarını bulan, Dijkstra algoritmasının bir varyasyonudur. 
+    Klasik Dijkstra en kısa (veya en düşük maliyetli) yolu ararken, bu algoritma darboğaz (bottleneck) kapasitesi en geniş olan yolu arar. 
+    Her iterasyonda hedef düğüme giden alternatifler arasından, geçebilecek maksimum transfer miktarını (Math.Min(capacities[current], edge.Amount)) hesaplayarak en güvenilir ve yüksek hacimli finansal rotayı tespit eder.*/
         var parentMap = new HashTable<string, string>(hashFunc: WalletHashFunctions.HashFNV1a);
         var capacities = new HashTable<string, decimal>(hashFunc: WalletHashFunctions.HashFNV1a);
         var addresses = BatuhanGetAddresses();
