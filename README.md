@@ -24,35 +24,30 @@
 
 ### İnşa Ettiği Yapılar:
 - **Veri Yapı Implementasyonları:**
-  - LinkedList veri yapısı
-  - Binary Tree yapısı
   - Graph algoritmaları
   - Blockchain node ve edge yapıları
 
 - **Core Engine & Backend:**
   - BlockchainGraph ana sınıfı ve metodları
-  - Pathfinding algoritmaları
   - Search ve traversal operasyonları
   - Entity-Relationship modeli
 
-- **API & Integration:**
-  - Backend API endpoints
-  - Frontend-Backend bağlantıları
-  - Data serialization (JSON)
-  - Request-Response handling
-
 - **Veri Yönetimi:**
-  - Dataset management
+  - Frontend-Backend bağlantı mimarı
   - Data flow control
   - Caching mekanizmaları
   - State management
-
+ 
+- **Docker:**
+  - Dockerfile optimization - Multi-stage build setup
+ 
+- **Documentation:**
+  - README.md teknik içeriği
+  - Her ana klasörde dökümantasyon
 ### Yaptığı İşler:
 ```
-✓ Tüm temel veri yapılarının tasarımı ve implementasyonu
 ✓ Graph engine'in mimarı (BatuhanGraph engine)
 ✓ Blockchain bileşenleri (WalletNode, TransactionEdge modeling)
-✓ API endpoint'lerinin tasarımı
 ✓ Frontend-Backend entegrasyon mimarı
 ✓ Dataset loading ve processing pipeline
 ✓ Test framework'ün kurulması
