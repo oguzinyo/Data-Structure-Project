@@ -390,5 +390,6 @@ docker compose down
 
 ```
 Proje Raporu Analizi->[Proje Raporu ve Analiz](https://github.com/user-attachments/files/28553262/Proje.Raporu.ve.Analiz.pdf)
+Demo Videosu->[Demo Videosu](https://youtu.be/WYRro70tyJs)
 
 
