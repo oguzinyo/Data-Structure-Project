@@ -18,20 +18,6 @@
 | Faz 3 | Oğuzhan Hekimoğlu | Backend API Entegrasyonu ve Veri Akışı | Ön yüzün tüm dinamik veri ihtiyacını karşılayan, in-memory veri yapılarını tüketen, hata yönetimi yapılmış RESTful API katmanı. |
 | Faz 3 | Ümmet Erkan | DevOps, Docker Konfigüratörü ve Kalite | Frontend, Backend ve AI servislerinin izole ağlarda çalıştığı docker-compose yapısı, kararlılık testleri ve proje demo videosu. |
 
-## 📊 Data-Structure-Project Contributor Analizi
-
-### **Genel İstatistikler**
-
-| Contributor | Commit Sayısı | Commit Yüzdesi | 
-|---|---|---|---|
-| **BatuhanOzdemir7** | 52 | 59% |
-| **TheQayu** | 12 | 14% |
-| **ummeter0** | 9 | 10% |
-| **Alozysr** | 6 | 7% |
-| **oguzinyo** | 6 | 7% |
-
----
-
 # 👥 Detaylı Contributor Analizi
 
 ## 1️⃣ **BatuhanOzdemir7** (52 commit)
